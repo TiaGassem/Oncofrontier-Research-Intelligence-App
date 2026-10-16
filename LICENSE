@@ -1,6 +1,6 @@
 MIT License
 
-Copyright (c) 2026 TiaGassem
+Copyright (c) 2026 ONCOFRONTIER
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -19,3 +19,21 @@ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
+
+---
+
+DATA LICENSE NOTICE:
+
+This application retrieves data from public research APIs including PubMed/NCBI
+E-utilities, Europe PMC REST API, ClinicalTrials.gov API v2, Open Targets Platform
+API, and PubChem REST API. Each data source retains its own license and terms of use.
+Users must respect the attribution requirements and data licenses of each source:
+
+- PubMed: https://www.ncbi.nlm.nih.gov/home/about/policies/
+- Europe PMC: https://europepmc.org/About
+- ClinicalTrials.gov: https://clinicaltrials.gov/about-site/terms-conditions
+- Open Targets: https://platform.opentargets.org/about
+- PubChem: https://pubchem.ncbi.nlm.nih.gov/docs/about
+
+The MIT license above applies to the application source code only, not to the
+data retrieved from these external sources.
