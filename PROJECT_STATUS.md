@@ -1,6 +1,6 @@
 # ONCOFRONTIER — Release Verification
 
-Checked: 2026-10-19. This report distinguishes the local submission source from the currently hosted Bolt app. Local code changes have not been deployed.
+Checked: 2026-10-20. This report distinguishes the local submission source from the currently hosted Bolt app. Local code changes have not been deployed.
 
 ## Verification matrix
 
@@ -8,8 +8,8 @@ Checked: 2026-10-19. This report distinguishes the local submission source from 
 |---|---|---|
 | TypeScript | PASS | `npm run typecheck` passes on the local source. |
 | ESLint | PASS | `npm run lint` passes on the local source. |
-| Unit tests | BLOCKED | `npm test` cannot start Vitest: Windows denies esbuild child-process launch (`spawn EPERM`). Existing accessibility, navigation, search, and translation tests therefore remain unverified. |
-| Production build | BLOCKED | `npm run build` fails before compilation for the same `spawn EPERM`. Do not submit this build as production-verified. |
+| Unit tests | BLOCKED | `npm test` cannot start Vitest: Windows denies esbuild child-process launch (`spawn EPERM`). Existing tests remain unverified. A GitHub Actions workflow is included to run them on a hosted runner, but has not run. |
+| Production build | BLOCKED | `npm run build` fails before compilation for the same `spawn EPERM`. The GitHub Actions workflow is configured to build on a hosted runner; no successful build artifact exists yet. |
 | Hosted app entry | PASS | User-provided Bolt URL loaded in the browser and rendered the dashboard. |
 | Display/accessibility controls | PARTIAL | Live settings panel opened. Blindness Support toggled larger text, listening mode, voice guide, and larger touch targets; Reset restored their original off state. No screen-reader or full keyboard audit was completed. |
 | Live evidence search | FAIL | Live query “EGFR resistance lung cancer” returned 61 records but displayed only “EGFR” as the query and included visibly unrelated records. Local source handles the whole quick-search string, but the hosted app is stale relative to local changes; deploy and retest before release. |
@@ -22,7 +22,7 @@ Checked: 2026-10-19. This report distinguishes the local submission source from 
 | Interface languages | PARTIAL | English, French, and Arabic have full resources. Sixteen more locales have partial core translations with English fallback for longer content. Tunisian Arabic shares Arabic UI. Translation tests check selected strings but could not run; no linguistic review was performed. Do not advertise “20 languages supported.” |
 | Saved data and RLS | PARTIAL | Local migrations scope user tables to `auth.uid()`. No safe live sign-in, cross-account isolation, storage-policy, backup, or current Supabase security-advisor test was run. |
 | Automations | PARTIAL | Saved searches can be checked manually in the app; there is no verified background scheduler or email delivery. |
-| SEO/public metadata | PARTIAL | Canonical, Open Graph/Twitter metadata, robots, and an absolute public-root sitemap now use the supplied Bolt domain. Local edits are not deployed; hash routes are not separate crawlable pages. Indexing is not verified. |
+| SEO/public metadata | PARTIAL | Build-time script now points canonical, Open Graph/Twitter, robots, and sitemap metadata at Netlify's configured public URL (or `PUBLIC_SITE_URL`). Not deployed or crawl/index tested; hash routes are not separate crawlable pages. |
 | Public legal/support pages | BLOCKED | Approved Privacy, Terms, Contact, and account-deletion information are absent. Do not invite public accounts until these are supplied. |
 | Poster discovery and templates | NOT TESTED | No verified global poster-search workflow or complete reusable template library was found in this pass. |
 | Promotional PDF | PARTIAL | Existing demo PDF is one page and describes 3 full interface translations plus 16 partial locales. Text/page count checked; no new render was made in this pass. |
@@ -33,10 +33,12 @@ Checked: 2026-10-19. This report distinguishes the local submission source from 
 - Added a localized skip-to-main-content link and made the PDF upload control keyboard reachable, with accessible progress and error announcements.
 - Added focus placement, Escape handling, and Tab containment to the display/accessibility dialog.
 - Changed the dashboard metric to the three complete interface translations instead of claiming all 20 language options are fully supported.
-- Made the site canonical, social metadata, robots sitemap reference, and sitemap URL absolute for the supplied Bolt domain.
+- Added build-time canonical/social metadata and sitemap generation from the actual hosting domain; no Bolt URL remains hard-coded in app metadata.
 - Required a verified signed-in Supabase user for configured server-side AI chat; public retrieval stays available to guests. Removed an immediate duplicate AI request after failure.
 - Added translated Companion privacy notices before chat input and made the PDF reader's upload, progress, and errors accessible to keyboard and assistive-technology users.
 - Corrected deployment and product documentation to disclose partial translations, unavailable features, provider dependencies, and public-release blockers.
+- Added a Netlify-aware post-build SEO sync and GitHub Actions checks workflow. Both still require a hosted build to verify.
+- Removed privileged Supabase service-role/database entries from `.env.example`; the submission ZIP excludes the local `.env` file.
 
 ## Privacy/security notes
 
@@ -47,4 +49,4 @@ Checked: 2026-10-19. This report distinguishes the local submission source from 
 
 ## Release recommendation: NOT READY
 
-The hosted app does not yet contain the local fixes, the live search returned poor results for a basic query, the current Windows environment could not run unit tests or build, and legal/support pages and abuse controls are incomplete. Deploy the updated package, run the checks in a build-capable environment, retest the search and auth paths, and close the disclosed public-release blockers before submission.
+The hosted app does not yet contain the local fixes, the live search returned poor results for a basic query, the current Windows environment could not run unit tests or build, and legal/support pages and abuse controls are incomplete. Netlify credentials/domain are not connected, so the Bolt live site has not been updated and no Netlify URL exists yet. A public GitHub screenshot showed `.env`; if the repository is public, rotate its values and remove the file/history before reconnecting Netlify. Deploy the updated package, run CI, retest the search and auth paths, and close the disclosed public-release blockers before submission.

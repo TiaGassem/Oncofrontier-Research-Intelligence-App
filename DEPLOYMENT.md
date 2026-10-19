@@ -25,11 +25,20 @@ Without the LLM secret, the app reports that AI chat is not configured and falls
 
 Image analysis, recorded-audio transcription, and speech fallback are separate user-started Puter features and may transmit selected content to that provider. Review and disclose current provider terms before enabling these workflows publicly.
 
+## Netlify publishing
+
+1. In Netlify, choose **Add new site → Import an existing project** and connect the GitHub repository containing this folder.
+2. Select the production branch. The checked-in `netlify.toml` supplies `npm run build` and `dist`.
+3. Add only the public `VITE_SUPABASE_URL` and `VITE_SUPABASE_ANON_KEY` if account features are needed. Put model-provider secrets in Supabase Edge Function Secrets, never in Netlify frontend variables.
+4. Deploy. The build uses Netlify's site URL for canonical, social, `robots.txt`, and sitemap metadata. Set `PUBLIC_SITE_URL` to the final HTTPS custom domain after attaching it in Netlify. Outside Netlify, set `PUBLIC_SITE_URL` before building; the build stops instead of publishing incorrect host metadata when no public URL is configured.
+
+The automatic GitHub workflow runs type checking, lint, tests, and production build on pushes and pull requests. It has not run from this local package yet. The Windows runner used for this repair denied the esbuild child process (`spawn EPERM`), so its tests and production build remain unverified until CI runs.
+
 ## Routes and search metadata
 
 Routes use URL fragments such as `/#/dashboard`. `robots.txt` and the sitemap cover the public application root; fragment views are not separate crawlable paths. Authentication and row-level security protect private records. Robots rules are not an access-control mechanism.
 
-The canonical and social URLs currently use the Bolt host supplied for this task. If the domain changes, update `index.html`, `public/sitemap.xml`, and `public/robots.txt`. Search-engine indexing is not guaranteed.
+Build-time metadata follows Netlify's configured public URL, or `PUBLIC_SITE_URL` when set. Search engines decide whether and where to index the site; sitemap submission is not a ranking guarantee. A custom `.com` requires a domain registered by the owner and attached in Netlify.
 
 ## Manual release checks
 
@@ -47,3 +56,7 @@ No screen-reader certification or independent WCAG audit has been performed. Bro
 ## Public-release blockers
 
 The application does not include approved Privacy, Terms, Contact, or account-deletion pages. Obtain real policy text and a support contact before inviting public accounts or collecting personal research. Poster search, email alerts, PDF annotations/bookmarks, OCR for scanned files, and a complete 20-language interface are not implemented.
+
+## Repository secret cleanup
+
+If `.env` was pushed to a public GitHub repository, make the repository private while cleaning it up, remove `.env` from the repository, and rotate any credentials it contained. Deleting the file from the latest commit alone does not revoke credentials or erase older Git history. This source package excludes `.env`; the remote repository was not changed here.
