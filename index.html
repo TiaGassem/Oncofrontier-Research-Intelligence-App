@@ -3,16 +3,60 @@
   <head>
     <meta charset="UTF-8" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32.png" />
+    <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16.png" />
+    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
+    <link rel="manifest" href="/manifest.json" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#16293f" />
     <title>ONCOFRONTIER — Pan-Cancer Research Intelligence</title>
     <meta name="description" content="Explore credible cancer research, treatment resistance, and research gaps across published literature and clinical trials." />
-    <meta property="og:image" content="https://bolt.new/static/og_default.png" />
+    <link rel="canonical" href="https://oncofrontier-researc-a8w7.bolt.host/" />
+    <meta property="og:title" content="ONCOFRONTIER — Pan-Cancer Research Intelligence" />
+    <meta property="og:description" content="Explore credible cancer research, treatment resistance, and research gaps across published literature and clinical trials." />
+    <meta property="og:url" content="https://oncofrontier-researc-a8w7.bolt.host/" />
+    <meta property="og:image" content="https://oncofrontier-researc-a8w7.bolt.host/icon-512.png" />
     <meta name="twitter:card" content="summary_large_image" />
-    <meta name="twitter:image" content="https://bolt.new/static/og_default.png" />
-    <script type="module" crossorigin src="/assets/index-DXo83J1d.js"></script>
-    <link rel="stylesheet" crossorigin href="/assets/index-Bktchn_t.css">
+    <meta name="twitter:title" content="ONCOFRONTIER — Pan-Cancer Research Intelligence" />
+    <meta name="twitter:description" content="Explore credible cancer research, treatment resistance, and research gaps across published literature and clinical trials." />
+    <meta name="twitter:image" content="https://oncofrontier-researc-a8w7.bolt.host/icon-512.png" />
+    <style>
+      /* Pre-React loading screen with brand mark */
+      #boot {
+        position: fixed; inset: 0; background: #16293f;
+        display: flex; align-items: center; justify-content: center;
+        flex-direction: column; gap: 16px;
+        font-family: system-ui, sans-serif; color: #cbf7ef;
+      }
+      #boot .arc { width: 64px; height: 64px; animation: boot-pulse 1.6s ease-in-out infinite; }
+      @keyframes boot-pulse {
+        0%, 100% { opacity: 1; transform: scale(1); }
+        50% { opacity: 0.75; transform: scale(0.96); }
+      }
+    </style>
   </head>
   <body>
     <div id="root"></div>
+    <div id="boot">
+      <svg class="arc" viewBox="0 0 100 100" aria-hidden="true">
+        <defs>
+          <linearGradient id="bootCell" x1="0" y1="1" x2="1" y2="0">
+            <stop offset="0" stop-color="#2cc3b1"/>
+            <stop offset="1" stop-color="#7fe6d8"/>
+          </linearGradient>
+        </defs>
+        <rect width="100" height="100" rx="22" fill="#16293f"/>
+        <path d="M84 74 C76 82 58 84 44 76 C28 67 26 46 40 36 C52 27 68 32 71 45 C74 57 64 66 53 64 C44 62 40 52 46 45"
+              fill="none" stroke="url(#bootCell)" stroke-width="9" stroke-linecap="round"/>
+      </svg>
+      <span style="letter-spacing:0.12em; font-weight:600; font-size:14px;">ONCOFRONTIER</span>
+    </div>
+    <script>
+      window.addEventListener('load', function () {
+        var boot = document.getElementById('boot');
+        if (boot) boot.remove();
+      });
+    </script>
+    <script type="module" src="/src/main.tsx"></script>
   </body>
 </html>

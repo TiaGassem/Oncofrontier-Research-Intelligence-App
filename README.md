@@ -1,12 +1,12 @@
 # ONCOFRONTIER — Pan-Cancer Research Intelligence Platform
 
-A professional, multilingual (English / French / Arabic), evidence-grounded pan-cancer research intelligence platform for academic researchers, students, translational scientists, clinical researchers, and pharmaceutical R&D teams.
+A professional, evidence-grounded pan-cancer research workspace for academic researchers, students, translational scientists, clinical researchers, pharmaceutical R&D teams, and — in a clearly separated experience — patients, caregivers, and the public. English, French, and Arabic have complete interface translations; 16 additional languages have partial core translations, and Tunisian Arabic uses the Arabic interface.
 
 ONCOFRONTIER retrieves **real data** from public research APIs. No fabricated papers, no invented citations, no hardcoded results. Every record traces back to a verifiable source.
 
 ## Features
 
-### Research Modules
+### Research modules
 
 1. **Discovery Bridge** — Cancer drug discovery workspace
    - Evidence-backed target assessment via Open Targets Platform API
@@ -16,13 +16,13 @@ ONCOFRONTIER retrieves **real data** from public research APIs. No fabricated pa
    - Compound lookup via PubChem REST API (name or SMILES)
    - SMILES validation with basic chemical syntax checking
    - Molecule explorer with structured handoff for computational chemistry
-   - Resistance context from retrieved publications and trials
+   - Resistance context from remaining publications and trials
    - Translational validation planner with evidence levels, controls, and missing information
    - Research brief export (Markdown copy / download)
 
 2. **CUREMAP** — Evidence Explorer
-   - Unified search across PubMed, Europe PMC, and ClinicalTrials.gov
-   - Filters by cancer type, gene, drug, treatment, and research question
+   - Unified search across PubMed, Europe PMC, ClinicalTrials.gov, Crossref, and OpenAlex
+   - Filters by cancer type, gene, drug, treatment, research question, and date range
    - Source comparison, deduplication (PMID/DOI/NCT ID), and study-context labels
    - Original source links and verified identifiers
 
@@ -43,16 +43,40 @@ ONCOFRONTIER retrieves **real data** from public research APIs. No fabricated pa
    - Accurately described as a retrieval-based assistant (no generative AI model connected)
    - Cites source-dependent claims
 
-7. **Methodology** — Sources & Limitations
+7. **Research Library** — Reference manager & workspace (requires sign-in)
+   - Favorites: saved publications and trials with identifiers and source links
+   - Import: paste BibTeX or RIS entries, or lists of DOIs/PMIDs — real metadata fetched from Crossref and PubMed, duplicate detection by DOI/PMID
+   - Export: CSV, RIS, and BibTeX downloads of the whole saved library
+   - Projects: named collections of saved papers (create, add/remove papers, delete)
+   - Search history, persisted across sessions
+   - Automations: saved queries with manual "Check now" for newly published papers (no background scheduler — checks run only while the app is open)
+
+8. **Connected Data Sources** — Live connector status
+   - Real reachability checks with latency, last-checked time, and error states
+   - Per-connector retest and test-all actions
+
+9. **Methodology** — Sources & Limitations
    - Transparent documentation of all data sources, their APIs, and limitations
 
-### International Accessibility
+### Patient & caregiver companion (separate experience)
 
-- **3 languages**: English, French, Arabic
-- **RTL layout** for Arabic (automatic `dir="rtl"` on document element)
+- Plain-language explanations of cancer types with staging and treatment context
+- Evidence-linked survival statistics with an explicit "what this statistic cannot tell you" panel — population statistics are never presented as individual prognoses
+- Clinical-trials context in plain language
+- Appointment question checklists with copy and print support
+- Every entry carries a source name and link (public-health and scientific resources)
+- Text-first and usable without an account; optional voice input/output and accessibility controls
+- Urgent-danger messages route to emergency care rather than in-app management
+- Floating companion bubble available on any page
+
+### International accessibility
+
+- **20 language options**: English, French, and Arabic have complete interface translations; 16 more languages (Spanish, German, Portuguese, Italian, Turkish, Chinese, Japanese, Korean, Hindi, Urdu, Persian, Bengali, Indonesian, Vietnamese, Thai, Swahili) have partial core translations with English fallback for longer module text; Tunisian Arabic is a dialect option using the Arabic interface
+- **RTL layout** for Arabic, Urdu, and Persian (automatic `dir="rtl"` on the document element; mirrored layouts via logical CSS properties)
+- **Language picker before sign-in** on the login page; the choice persists locally so switching language never loses selected records or in-progress work
 - Scientific terms, gene symbols, compound names, and identifiers preserved untranslated
 
-## Data Sources
+## Data sources
 
 | Source | API | Purpose |
 |--------|-----|---------|
@@ -61,8 +85,12 @@ ONCOFRONTIER retrieves **real data** from public research APIs. No fabricated pa
 | ClinicalTrials.gov API v2 | `https://clinicaltrials.gov/api/v2/` | Registered clinical studies |
 | Open Targets Platform | `https://api.platform.opentargets.org/api/v4/graphql` | Target–disease associations, tractability, safety |
 | PubChem REST API | `https://pubchem.ncbi.nlm.nih.gov/rest/pug/` | Compound names, SMILES, molecular properties |
+| Crossref REST API | `https://api.crossref.org/works` | DOI-registered scholarly metadata |
+| OpenAlex | `https://api.openalex.org/works` | Open scholarly works with citation counts and open-access flags |
 
-All APIs are public and require no API keys.
+All literature APIs are public and require no API keys.
+
+Companion chat runs through a Supabase Edge Function that keeps the LLM key server-side. When configured, the AI path requires a signed-in Supabase user; guests can still use source-based retrieval. There is no user-paid chat fallback. Image analysis, audio transcription, and speech fallback may use Puter as separate, user-initiated features.
 
 ## Architecture
 
@@ -71,36 +99,44 @@ All APIs are public and require no API keys.
 - **Icons**: lucide-react
 - **State**: React Context (AppContext) for record selection, navigation, and language
 - **API clients**: `src/lib/` — separate modules for each data source
-- **i18n**: `src/lib/i18n.ts` — translation strings for EN/FR/AR
+- **Persistence**: Supabase with owner-scoped RLS on every table
+- **i18n**: `src/lib/i18n.ts` (EN/FR/AR full translations) + `src/lib/coreTranslations.ts`, `src/lib/eyeComfortTranslations.ts`, `src/lib/chatUiTranslations.ts` (centralized partials for the 16 additional locales)
 
 ```
 src/
 ├── App.tsx                    # Root component with view routing + RTL
-├── context/AppContext.tsx     # Global state: selected records, view, language
+├── context/
+│   ├── AppContext.tsx         # Global state: selected records, view, language
+│   ├── AuthContext.tsx        # Supabase email/password auth
+│   └── A11yContext.tsx        # Accessibility preferences
 ├── lib/
 │   ├── pubmed.ts              # PubMed/NCBI E-utilities client
 │   ├── europepmc.ts           # Europe PMC REST client
 │   ├── clinicaltrials.ts      # ClinicalTrials.gov API v2 client
+│   ├── crossref.ts            # Crossref client
+│   ├── openalex.ts            # OpenAlex client (incl. inverted-index abstracts)
 │   ├── search.ts              # Unified search + deduplication
 │   ├── opentargets.ts         # Open Targets GraphQL client
 │   ├── pubchem.ts             # PubChem compound lookup + SMILES validation
-│   └── i18n.ts                # EN/FR/AR translations
-├── pages/
-│   ├── Dashboard.tsx
-│   ├── DiscoveryBridge.tsx    # Drug discovery workspace
-│   ├── CureMap.tsx
-│   ├── ResistanceAtlas.tsx
-│   ├── EquityRadar.tsx
-│   ├── ActionPlanner.tsx
-│   ├── ResearchAssistant.tsx
-│   └── Methodology.tsx
-├── components/
-│   ├── Sidebar.tsx            # Navigation + language selector
-│   ├── RecordCard.tsx
-│   ├── SearchBar.tsx
-│   ├── SourceBadge.tsx
-│   ├── PageHeader.tsx
-│   └── States.tsx             # Loading/Empty/Error states
+│   ├── connectors.ts          # Live connector status checks
+│   ├── persistence.ts         # Favorites + search history
+│   ├── projects.ts            # Research projects
+│   ├── automations.ts         # Saved search automations
+│   ├── referenceFormats.ts    # BibTeX/RIS/CSV import + export, DOI/PMID lookup
+│   ├── chatHistory.ts         # Conversation persistence
+│   ├── aiProvider.ts          # Edge-function chat client + vision/TTS fallbacks
+│   ├── transcription.ts       # Voice transcription
+│   ├── languageSupport.ts     # Language detection + speech support
+│   ├── companionData.ts       # Plain-language cancer dictionary + survival stats
+│   └── i18n.ts                # EN/FR/AR translations + merge of 16 locale partials
+├── pages/                     # Dashboard, Companion, CureMap, DiscoveryBridge,
+│                              # ResistanceAtlas, EquityRadar, ActionPlanner,
+│                              # ResearchAssistant, Library, PdfReader,
+│                              # LoginPage, Methodology, GlobalBurdenAtlas,
+│                              # BiomarkerAtlas, CancerAnatomy
+├── components/                # Sidebar, FloatingCompanion, DataSourceStatus,
+│                              # RecordCard, SearchBar, SourceBadge, PageHeader,
+│                              # ConversationManager, AccessibilityMenu, States, ...
 └── types/index.ts             # Shared TypeScript types
 ```
 
@@ -124,15 +160,27 @@ npm run preview
 
 # Lint
 npm run lint
+
+# Tests
+npm test
 ```
 
-## Environment Variables
+## Environment variables
 
-No external API keys are required. The app uses only public, key-free APIs.
+`.env.example` lists variable names only — copy it to `.env` and fill in real values locally; never commit it.
 
-Supabase is used only for optional authentication and private library data. Public research features do not require Supabase. For an independent deployment, add `VITE_SUPABASE_URL` and `VITE_SUPABASE_ANON_KEY` to the host environment to enable accounts, favorites, and search history.
+| Variable | Purpose |
+|----------|---------|
+| `VITE_SUPABASE_URL` | Supabase project URL (browser-safe) |
+| `VITE_SUPABASE_ANON_KEY` | Supabase anon key (browser-safe) |
+| `SUPABASE_SERVICE_ROLE_KEY` | Server-side only — never expose in frontend |
+| `SUPABASE_DB_URL` | Database connection URL — server-side only |
 
-## Scientific Integrity
+**Server-side secret configuration:** the Companion LLM key is stored as a Supabase Edge Function secret (`LLM_API_KEY`, set via the Supabase dashboard or CLI), never in frontend code. Configured AI chat checks the caller's signed-in Supabase session. Image analysis, audio transcription, and speech fallback can send selected image/audio/text to Puter after the user starts that feature; review its current terms and privacy handling before enabling those workflows publicly.
+
+Public research features work without Supabase; accounts, the library, and automations require it.
+
+## Scientific integrity
 
 - **No fabricated data**: Every paper, trial, target, and compound comes from a real API response
 - **Source traceability**: All records include original source URLs and stable identifiers (PMID, DOI, NCT ID, Ensembl ID, PubChem CID)
@@ -143,25 +191,28 @@ Supabase is used only for optional authentication and private library data. Publ
 
 ## Independent deployment
 
-The project is portable and does not require a Bolt editor or hosting session. Netlify is configured through `netlify.toml`; the production output is `dist/`, and client-side routes fall back to `index.html`. The same `npm run build` output can be deployed to any static host that supports SPA fallbacks.
+The project is portable and does not require a Bolt editor or hosting session. Netlify is configured through `netlify.toml` (build: `npm run build`, publish: `dist/`, SPA fallback redirect); `public/_redirects` provides the same fallback for other static hosts. Direct navigation and page refresh on client-side routes resolve to `index.html`.
 
 ```bash
 npm install
 npm run typecheck
 npm run lint
+npm test
 npm run build
 ```
 
-Configure `VITE_SUPABASE_URL` and `VITE_SUPABASE_ANON_KEY` only when private account features are needed. Never expose service-role or database credentials in frontend environment variables.
+Deploy the `dist/` folder to Netlify (or any static host with SPA fallback). Configure the two `VITE_SUPABASE_*` variables in the host environment only when private account features are needed. Never expose service-role or database credentials in frontend environment variables.
 
-## Limitations
+## Known limitations
 
-- Email research alerts are not implemented.
-- No generative AI model is connected; Research Assistant uses retrieval and source records.
+- Email research alerts are not implemented; automations check manually.
+- Research Assistant uses retrieval and source records; only Companion chat uses the LLM endpoint.
 - No de novo molecular generation; the interface labels that capability as not connected.
-- The public APIs can apply their own rate limits or experience outages; errors are shown to users.
-- Browser-based visual testing is not available in this environment.
+- Companion chat replies fall back to English when the model cannot comply with the requested language; speech recognition quality varies by browser and installed device voices.
+- OCR is not available for scanned PDFs; the app warns rather than pretending to read them.
+- The public literature APIs apply their own rate limits and can have outages; errors and retry actions are shown to users.
+- Browser-based visual testing was not available in this environment (see handover notes).
 
 ## License
 
-MIT License — see [LICENSE](LICENSE) for full text. Data from external APIs retains their respective licenses.
+AGPL-3.0 License — see [LICENSE](LICENSE) for full text. This license requires that anyone who modifies the app and offers it as a network service must also release their modified source code. Data from external APIs retains their respective licenses.

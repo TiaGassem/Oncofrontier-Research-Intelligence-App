@@ -24,5 +24,17 @@ export default tseslint.config(
         { allowConstantExport: true },
       ],
     },
+  },
+  {
+    // React Context files pair a provider component with its companion hook
+    // (and related types); that coupling is intentional and cannot be split
+    // without letting hooks run outside their provider.
+    files: [
+      'src/context/**/*.tsx',
+      'src/components/CompanionChatCore.tsx',
+    ],
+    rules: {
+      'react-refresh/only-export-components': 'off',
+    },
   }
 );

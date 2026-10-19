@@ -1,45 +1,50 @@
-# ONCOFRONTIER — Project Status
+# ONCOFRONTIER — Release Verification
 
-## Current release
+Checked: 2026-10-19. This report distinguishes the local submission source from the currently hosted Bolt app. Local code changes have not been deployed.
 
-ONCOFRONTIER is a Vite + React + TypeScript application. It builds to `dist/` and is deployable from a clean GitHub checkout on standard static hosts. `netlify.toml` configures Netlify build and client-side route fallback; `public/_redirects` is copied into the production output.
+## Verification matrix
 
-## Scientific sources
+| Area | Status | Evidence / limitation |
+|---|---|---|
+| TypeScript | PASS | `npm run typecheck` passes on the local source. |
+| ESLint | PASS | `npm run lint` passes on the local source. |
+| Unit tests | BLOCKED | `npm test` cannot start Vitest: Windows denies esbuild child-process launch (`spawn EPERM`). Existing accessibility, navigation, search, and translation tests therefore remain unverified. |
+| Production build | BLOCKED | `npm run build` fails before compilation for the same `spawn EPERM`. Do not submit this build as production-verified. |
+| Hosted app entry | PASS | User-provided Bolt URL loaded in the browser and rendered the dashboard. |
+| Display/accessibility controls | PARTIAL | Live settings panel opened. Blindness Support toggled larger text, listening mode, voice guide, and larger touch targets; Reset restored their original off state. No screen-reader or full keyboard audit was completed. |
+| Live evidence search | FAIL | Live query “EGFR resistance lung cancer” returned 61 records but displayed only “EGFR” as the query and included visibly unrelated records. Local source handles the whole quick-search string, but the hosted app is stale relative to local changes; deploy and retest before release. |
+| Source integrations | PARTIAL | Source code uses public PubMed, Europe PMC, ClinicalTrials.gov, Crossref, OpenAlex, Open Targets, and PubChem APIs. Live search returned records; each provider's current health and relevance were not separately verified in this pass. |
+| Research assistant | PARTIAL | Local assistant is retrieval and formatting, not generative AI; results link to source records. Evidence comparison and source-passage-grounded synthesis are not implemented. |
+| PDF reader | PARTIAL | Local PDF text extraction and keyword passage search; scanned-page OCR, rendered page navigation, highlights, annotations, bookmarks, and citation capture are not implemented. File selection is now keyboard reachable, but that change was not browser-tested. |
+| Companion AI chat | PARTIAL | The edge function keeps the model key server-side. Local code now verifies a signed-in Supabase user before the configured LLM call and avoids repeating failed model calls; guests retain public retrieval. Both chat views disclose search/AI provider processing and avoid-identifier guidance. The changed edge function has not been deployed or end-to-end tested. Provider-side limits are still required; application rate limiting is absent. |
+| Voice and listening | PARTIAL | Browser speech recognition/synthesis and explicit Puter-based audio fallback exist. Support varies by browser, device, installed voices, and network. No microphone hardware test was performed. |
+| Accessibility implementation | PARTIAL | Four presets and persistent display settings exist. A keyboard skip link, modal focus handling, and accessible PDF upload were added locally. No NVDA, VoiceOver, TalkBack, WCAG audit, color-simulation audit, or mobile assistive-technology test was performed. |
+| Interface languages | PARTIAL | English, French, and Arabic have full resources. Sixteen more locales have partial core translations with English fallback for longer content. Tunisian Arabic shares Arabic UI. Translation tests check selected strings but could not run; no linguistic review was performed. Do not advertise “20 languages supported.” |
+| Saved data and RLS | PARTIAL | Local migrations scope user tables to `auth.uid()`. No safe live sign-in, cross-account isolation, storage-policy, backup, or current Supabase security-advisor test was run. |
+| Automations | PARTIAL | Saved searches can be checked manually in the app; there is no verified background scheduler or email delivery. |
+| SEO/public metadata | PARTIAL | Canonical, Open Graph/Twitter metadata, robots, and an absolute public-root sitemap now use the supplied Bolt domain. Local edits are not deployed; hash routes are not separate crawlable pages. Indexing is not verified. |
+| Public legal/support pages | BLOCKED | Approved Privacy, Terms, Contact, and account-deletion information are absent. Do not invite public accounts until these are supplied. |
+| Poster discovery and templates | NOT TESTED | No verified global poster-search workflow or complete reusable template library was found in this pass. |
+| Promotional PDF | PARTIAL | Existing demo PDF is one page and describes 3 full interface translations plus 16 partial locales. Text/page count checked; no new render was made in this pass. |
 
-The application calls public, key-free APIs directly from the browser:
+## Changes in this repair
 
-- PubMed / NCBI E-utilities
-- Europe PMC
-- ClinicalTrials.gov API v2
-- Open Targets Platform GraphQL API
-- PubChem REST API
+- Kept the Heart companion launcher and open chat on the physical right edge with safe-area spacing, including one-handed mode (`src/components/FloatingCompanion.tsx`, `src/index.css`).
+- Added a localized skip-to-main-content link and made the PDF upload control keyboard reachable, with accessible progress and error announcements.
+- Added focus placement, Escape handling, and Tab containment to the display/accessibility dialog.
+- Changed the dashboard metric to the three complete interface translations instead of claiming all 20 language options are fully supported.
+- Made the site canonical, social metadata, robots sitemap reference, and sitemap URL absolute for the supplied Bolt domain.
+- Required a verified signed-in Supabase user for configured server-side AI chat; public retrieval stays available to guests. Removed an immediate duplicate AI request after failure.
+- Added translated Companion privacy notices before chat input and made the PDF reader's upload, progress, and errors accessible to keyboard and assistive-technology users.
+- Corrected deployment and product documentation to disclose partial translations, unavailable features, provider dependencies, and public-release blockers.
 
-All five APIs returned successful test responses during this release verification, and the API responses allow browser cross-origin requests. Dashboard links now open each provider's valid public landing/search page instead of an API root that returns 404. API failures remain visible in the research screens rather than being replaced with fabricated records.
+## Privacy/security notes
 
-## Authentication and data
+- The submission archive excludes `.env`, `node_modules`, `dist`, `.bolt`, and `.git`; `.env.example` contains placeholders only.
+- Database RLS was reviewed statically in the local migrations; remote policy state was not inspected in this pass.
+- Companion LLM requests and local retrieval have different data flows. User-started Puter image/audio/TTS features may transmit content to that provider; explain this to users before public launch.
+- The Edge Function still needs deployed auth changes, provider usage limits, and abuse/rate-limit controls before enabling an LLM secret publicly.
 
-Supabase remains the independently managed database and authentication provider. The existing migration defines `search_history`, `favorites`, `projects`, `project_items`, and `notes` with authenticated row-level ownership policies.
+## Release recommendation: NOT READY
 
-The frontend now treats Supabase as optional for public deployments: without `VITE_SUPABASE_URL` and `VITE_SUPABASE_ANON_KEY`, guests can still use all public research features and private account actions show a clear configuration message. Existing Supabase data and accounts are not altered or migrated by this release.
-
-## Bolt dependency classification
-
-- `.bolt/config.json`: editor/template metadata only; not imported by the application or production build.
-- Supabase credentials: backend service configuration, not a Bolt runtime dependency.
-- Public scientific APIs: independent external services; no Bolt proxy is used.
-- Vite, React, TypeScript, Tailwind, and Supabase client: standard project dependencies.
-
-No application runtime code requires a Bolt editor session or Bolt hosting URL.
-
-## Verification
-
-- Public API checks: PubMed, Europe PMC, ClinicalTrials.gov, Open Targets, and PubChem returned HTTP 200 for representative requests.
-- CORS checks: all five endpoints allowed browser requests from a local origin.
-- TypeScript typecheck: passed.
-- ESLint: passed with the existing two react-refresh warnings and no errors.
-- Production build: passed.
-- Secret safety: `.env` is ignored; `.env.example` contains placeholders only.
-
-## Remaining setup
-
-To enable sign-in, favorites, and search history on an independent host, add the existing Supabase project URL and anon key as host environment variables. No database reset, account migration, or destructive backend change was performed. Email alerts, server-side API proxying, and full project management remain outside the implemented release.
+The hosted app does not yet contain the local fixes, the live search returned poor results for a basic query, the current Windows environment could not run unit tests or build, and legal/support pages and abuse controls are incomplete. Deploy the updated package, run the checks in a build-capable environment, retest the search and auth paths, and close the disclosed public-release blockers before submission.

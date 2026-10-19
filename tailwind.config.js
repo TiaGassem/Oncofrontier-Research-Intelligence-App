@@ -34,6 +34,51 @@ export default {
           900: '#124745',
           950: '#042726',
         },
+        // Warm neutral surface (replaces harsh pure-white backgrounds)
+        paper: {
+          50: '#fbfaf7',
+          100: '#f5f3ee',
+          200: '#eae6de',
+        },
+        // Dusty blue
+        steel: {
+          50: '#f2f6fa',
+          100: '#e1eaf3',
+          200: '#c3d5e7',
+          300: '#9db9d4',
+          400: '#7296ba',
+          500: '#537aa0',
+          600: '#436184',
+          700: '#384e6b',
+        },
+        // Soft lavender
+        lavender: {
+          50: '#f7f6fb',
+          100: '#edebf6',
+          200: '#dbd7ee',
+          300: '#bcb4de',
+          400: '#9c90cd',
+          500: '#7f6fba',
+          600: '#65569b',
+        },
+        // Sage green
+        sage: {
+          50: '#f4f7f3',
+          100: '#e5ece2',
+          200: '#cbd8c6',
+          300: '#a8bda1',
+          400: '#84a07c',
+          500: '#66845e',
+          600: '#4f6849',
+        },
+        clay: {
+          50: '#fbf5f2',
+          100: '#f6e8e1',
+          200: '#edd0c3',
+          300: '#dcab97',
+          400: '#c6856e',
+          500: '#a96750',
+        },
       },
       animation: {
         'fade-in': 'fadeIn 0.3s ease-out',
