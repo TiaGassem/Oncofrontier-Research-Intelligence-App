@@ -34,6 +34,17 @@ Image analysis, recorded-audio transcription, and speech fallback are separate u
 
 The automatic GitHub workflow runs type checking, lint, tests, and production build on pushes and pull requests. It has not run from this local package yet. The Windows runner used for this repair denied the esbuild child process (`spawn EPERM`), so its tests and production build remain unverified until CI runs.
 
+## Free alternative: Cloudflare Pages
+
+This static Vite app can also deploy from the existing GitHub repository to Cloudflare Pages:
+
+1. In Cloudflare, open **Workers & Pages → Create application → Pages → Connect to Git** and select the GitHub repository.
+2. Set build command to `npm run build` and build output directory to `dist`. The repository's `.nvmrc` selects Node 22.
+3. After Cloudflare assigns the project URL, add `PUBLIC_SITE_URL` in the Pages build environment, for example `https://your-project.pages.dev`, then redeploy. This ensures SEO metadata points to the permanent project URL rather than a one-off preview URL.
+4. Add only public `VITE_SUPABASE_URL` and `VITE_SUPABASE_ANON_KEY` variables if needed. Keep model secrets in Supabase Edge Function Secrets.
+
+Cloudflare's documented Free Pages allowance is 500 deployments per month, one build at a time. It supports custom domains, but a `.com` must already be owned/registered. See the current [Cloudflare Pages limits](https://developers.cloudflare.com/pages/platform/limits/) and [custom-domain setup](https://developers.cloudflare.com/pages/configuration/custom-domains/).
+
 ## Routes and search metadata
 
 Routes use URL fragments such as `/#/dashboard`. `robots.txt` and the sitemap cover the public application root; fragment views are not separate crawlable paths. Authentication and row-level security protect private records. Robots rules are not an access-control mechanism.
