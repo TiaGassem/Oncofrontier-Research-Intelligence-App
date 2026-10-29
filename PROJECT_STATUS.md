@@ -37,16 +37,20 @@ this environment.
 | Role-aware navigation | PASS | Sidebar orders role modules first; others remain under "All modules". |
 | Localization (en/fr/ar) | PASS (unit) | New landing/onboarding strings exist for en/fr/ar with English fallback for other locales; parity asserted. |
 | Localization (full UI) | PARTIAL | en/fr/ar remain the only complete interfaces; 16 other locales are core-labels-only, as before. |
-| RTL layout | NOT TESTED | Arabic strings and `dir` handling exist; no browser/RTL visual check was performed here. |
-| Screen-reader / keyboard audit | NOT TESTED | Semantic structure and focus handling were implemented, but no NVDA/VoiceOver/keyboard walkthrough was run. |
+| RTL direction logic | PASS (unit) | `direction` resolves to `rtl` for Arabic and back to `ltr` for English (`src/test/a11y.test.tsx`). |
+| RTL visual layout | BLOCKED | Chromium cannot run in this environment (`libnspr4` missing, no root to install dependencies), so mirrored layout was never seen rendered. |
+| Automated a11y rules | PASS | axe-core WCAG 2 A/AA scan: 0 serious/critical violations on landing, onboarding and legal pages. jsdom skips geometry rules, so contrast is **not** covered. |
+| Screen-reader / keyboard audit | NOT TESTED | No NVDA/VoiceOver/JAWS run; requires a real assistive technology session. |
 | Voice / microphone path | NOT TESTED | Unchanged by this pass; requires real browser + microphone hardware. |
-| Scientific APIs (live calls) | NOT TESTED | Clients unchanged; no live network verification was run in this pass. |
-| Supabase auth / RLS | NOT TESTED | No credentials in the archive, by design. Schema and owner-scoped policies inspected statically only. |
+| Scientific APIs (live calls) | PASS | All seven endpoints returned HTTP 200 with real payloads on 2026-10-29: PubMed (9,272 hits), Europe PMC (177,214), ClinicalTrials.gov, Crossref, OpenAlex, PubChem (CID 2244), Open Targets GraphQL (`approvedSymbol: EGFR`). |
+| Supabase RLS (schema) | PASS | `npm run audit:rls`: all 8 tables have RLS enabled and every policy is owner-anchored (direct `auth.uid() = user_id`, or via parent project for `project_items`). |
+| Supabase auth (live project) | BLOCKED | No credentials in the archive, by design. Cross-account isolation and live policy state cannot be tested without them. |
 | Secrets in bundle | PASS | Scan of `dist/` for service-role keys, JWTs, `postgresql://` and `sk-` patterns: 0 hits. |
 | SEO files | PASS | `robots.txt`, `sitemap.xml`, canonical + OG tags generated from `PUBLIC_SITE_URL`. |
-| Independent deployment | BLOCKED | No host credentials/domain available here. Steps are documented in `DEPLOYMENT.md`. |
-| Legal pages (Privacy/Terms/Contact) | BLOCKED | Still absent; needed before inviting public accounts. |
-| PWA | PARTIAL | `manifest.json` + icons + theme colour exist; no service worker, so no offline behaviour. |
+| Deployable artifact | PASS | `dist/` builds with SPA fallback (`public/_redirects`), SEO files and the service worker. |
+| Independent deployment | BLOCKED | No host credentials or domain. Nothing was published; steps are in `DEPLOYMENT.md`. |
+| Legal pages | PARTIAL | Draft Privacy, Terms and Contact pages added and routed. They describe real behaviour but need owner/legal review and a real contact address before public accounts. Text is English-only. |
+| PWA offline shell | PARTIAL | `public/sw.js` built by `scripts/build-sw.mjs`: 31-file precache, network-first navigations, cache-first hashed assets, no API/third-party caching, registered in production only. Install/prompt-to-install not browser-tested. |
 
 ## Changes in this repair
 
@@ -66,6 +70,16 @@ this environment.
 - Added workspace density rules in `src/index.css` driven by `data-density`.
 - Added 12 tests (`experience.test.tsx`, `atlas.test.tsx`) and updated the
   navigation test for the new first-run behaviour.
+- Added a service worker + `scripts/build-sw.mjs` so the app has an offline
+  shell; it caches no API, Supabase or non-GET traffic.
+- Added draft Privacy, Terms and Contact pages (`src/pages/Legal.tsx`) routed as
+  `#/privacy`, `#/terms`, `#/contact` and linked from the sidebar and homepage.
+- Added `scripts/audit-rls.mjs` (`npm run audit:rls`) which verifies every
+  migrated table is RLS-enabled and owner-anchored.
+- Added `scripts/audit-browser.mjs` for a real-browser RTL/keyboard/axe/deep-link
+  audit. It requires Playwright and system Chromium libraries, which this
+  environment cannot install — it is ready to run on a normal workstation or CI.
+- Added axe-core as a dev dependency and `src/test/a11y.test.tsx`.
 
 ## Notes and limitations
 

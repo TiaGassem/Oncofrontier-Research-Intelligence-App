@@ -12,6 +12,7 @@ import { Library } from '@/pages/Library';
 import { LoginPage } from '@/pages/LoginPage';
 import { Landing } from '@/pages/Landing';
 import { OnboardingWizard } from '@/components/OnboardingWizard';
+import { LegalPage } from '@/pages/Legal';
 
 // Heavy, less-frequently-used views are lazy-loaded so the initial bundle
 // stays small. Dashboard renders immediately.
@@ -100,6 +101,12 @@ function AppContent() {
         return <ResearchAssistant />;
       case 'methodology':
         return <Methodology />;
+      case 'privacy':
+        return <LegalPage kind="privacy" />;
+      case 'terms':
+        return <LegalPage kind="terms" />;
+      case 'contact':
+        return <LegalPage kind="contact" />;
       case 'pdf':
         return <PdfReader />;
       case 'library':

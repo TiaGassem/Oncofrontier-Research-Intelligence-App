@@ -270,6 +270,11 @@ export function Sidebar({ currentView, onNavigate }: SidebarProps) {
               </button>
             </div>
           )}
+          <div className="flex flex-wrap items-center gap-x-3 gap-y-1 px-1 text-[10px] text-navy-400">
+            <button onClick={() => onNavigate('privacy')} className="underline underline-offset-2 hover:text-teal-300">Privacy</button>
+            <button onClick={() => onNavigate('terms')} className="underline underline-offset-2 hover:text-teal-300">Terms</button>
+            <button onClick={() => onNavigate('contact')} className="underline underline-offset-2 hover:text-teal-300">Contact</button>
+          </div>
           <details className="group">
             <summary className="text-[10px] text-navy-400 hover:text-navy-200 cursor-pointer list-none flex items-center gap-1 select-none">
               <ChevronDown className="w-3 h-3 transition-transform group-open:rotate-180" aria-hidden="true" />

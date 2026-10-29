@@ -154,7 +154,10 @@ export type ViewName =
   | 'burden'
   | 'biomarkers'
   | 'anatomy'
-  | 'companion';
+  | 'companion'
+  | 'privacy'
+  | 'terms'
+  | 'contact';
 
 export type Language =
   | 'en' | 'fr' | 'ar'
