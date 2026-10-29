@@ -1,10 +1,28 @@
 # ONCOFRONTIER — Deployment Notes
 
-## Current state
+## Current state — LIVE
 
-The application is a Vite, React, and TypeScript single-page app. The user-provided Bolt URL loads, but source edits in this package are not automatically deployed there. The current source has not passed a production build in this Windows environment because Vite/esbuild cannot start its child process (`spawn EPERM`).
+The application is a Vite, React, and TypeScript single-page app, and it is
+running publicly on Freebuff Sites (Cloudflare Workers), free tier:
 
-The project includes Netlify build and SPA-fallback configuration. Build command: `npm run build`; publish directory: `dist`.
+| Environment | URL | Status |
+|-------------|-----|--------|
+| **Production** | https://site-003121db6e354dc9a774e4d106b499db.freebuff.page | Published |
+| Preview | https://site-e116a2f11ddf473b8eeabf392fd8984e.freebuff.page | Published |
+
+Verified over HTTP against the production URL: `200` for `/`, the JS/CSS
+bundles, `robots.txt`, `sitemap.xml`, `sw.js`, `manifest.json` and every icon;
+`text/html` / `text/javascript` / `text/css` content types correct; unknown
+paths fall back to `index.html`; canonical, `robots.txt` and `sitemap.xml` all
+point at the production origin; zero source maps and no Supabase key in the
+bundle.
+
+The build passes locally: typecheck 0 errors, lint 0 problems, full test suite
+green, `npm run build` clean. The earlier `spawn EPERM` note referred to an old
+Windows environment and no longer applies.
+
+Also configured: Netlify build and SPA fallback (`npm run build` → `dist`) and
+Cloudflare Pages (below).
 
 ## Repository layout
 
@@ -101,10 +119,56 @@ Cloudflare's free Pages allowance is 500 builds/month, one build at a time.
 See [Pages limits](https://developers.cloudflare.com/pages/platform/limits/) and
 [custom domains](https://developers.cloudflare.com/pages/configuration/custom-domains/).
 
+## Freebuff Sites (the host this repo is live on)
+
+Sites deploys a prebuilt Worker plus static assets — no build step runs on the
+platform, so build locally first (`npm run build`) and deploy the output.
+
+Files involved:
+
+- `worker.js` — entry point: `env.ASSETS.fetch(request)` serves the SPA.
+- `freebuff.manifest.json` — `entrypoint`, `modules`, `assetsDirectory: "./dist"`,
+  `spa: true` (unknown paths fall back to `index.html`).
+
+Deploy sequence after any source change:
+
+1. `PUBLIC_SITE_URL=<production-url> npm run build`
+2. **`rm dist/_redirects`** — required, see below.
+3. `sites_deploy` with the manifest path, one request id per intended change.
+4. `sites_set_published` if the environment is offline.
+5. Re-verify `/`, both bundles, `robots.txt` and `sitemap.xml` over HTTP.
+
+### `rm dist/_redirects` is mandatory
+
+Cloudflare rejects a file named `_redirects` in a Worker asset upload with
+error code **100324**, stage `worker_upload`, HTTP 400. This was isolated by
+bisection: deploys containing it failed, the same payload without it succeeded.
+
+`public/_redirects` stays in the repository because Cloudflare **Pages** needs
+it for its own SPA fallback. It only has to be removed from the `dist` that is
+handed to `sites_deploy`, and a fresh build re-creates it — so strip it at
+step 2 every time. `spa: true` in the manifest provides the equivalent
+fallback on Sites.
+
+### Environment variables on Sites
+
+`PUBLIC_SITE_URL` is applied at **build** time, not deploy time — a rebuild is
+what moves canonical/robots/sitemap to a new host. `VITE_SUPABASE_URL` and
+`VITE_SUPABASE_ANON_KEY` are the only frontend values needed for accounts, and
+they must be present in the environment when `npm run build` runs.
+
+The current live build has **no** Supabase values, so account features (sign-in,
+saved favourites, per-user notes, companion chat) report their
+"requires configuration" state rather than failing. The public browsing,
+search, anatomy, legal and accessibility features all work.
+
 ## Getting found on Google
 
+Submit this sitemap today (it is already live):
+`https://site-003121db6e354dc9a774e4d106b499db.freebuff.page/sitemap.xml`
+
 1. **Google Search Console** → Add property → verify with a DNS TXT record →
-   submit `https://yourdomain.com/sitemap.xml`.
+   submit the sitemap above (URL-prefix property works without DNS).
 2. **Bing Webmaster Tools** → same verification and sitemap (Bing also feeds
    DuckDuckGo and Copilot).
 3. Validate social cards with LinkedIn's and Twitter's card validators — the
