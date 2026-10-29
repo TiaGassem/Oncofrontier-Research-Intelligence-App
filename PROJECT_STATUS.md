@@ -38,7 +38,7 @@ this environment.
 | Localization (en/fr/ar) | PASS (unit) | New landing/onboarding strings exist for en/fr/ar with English fallback for other locales; parity asserted. |
 | Localization (full UI) | PARTIAL | en/fr/ar remain the only complete interfaces; 16 other locales are core-labels-only, as before. |
 | RTL direction logic | PASS (unit) | `direction` resolves to `rtl` for Arabic and back to `ltr` for English (`src/test/a11y.test.tsx`). |
-| RTL visual layout | BLOCKED | Chromium cannot run in this environment (`libnspr4` missing, no root to install dependencies), so mirrored layout was never seen rendered. |
+| RTL visual layout | BLOCKED | Chromium cannot launch in this VM. Its X/ATK runtime libraries are absent and `sudo` is unavailable; rootless `.deb` extraction resolved the missing X libraries but `libatk-bridge` 2.62 needs a `libatk` build the mirror does not carry (`undefined symbol: atk_object_get_help_text`). `scripts/audit-browser.mjs` is ready to run anywhere `npx playwright install-deps chromium` is possible. |
 | Automated a11y rules | PASS | axe-core WCAG 2 A/AA scan: 0 serious/critical violations on landing, onboarding and legal pages. jsdom skips geometry rules, so contrast is **not** covered. |
 | Screen-reader / keyboard audit | NOT TESTED | No NVDA/VoiceOver/JAWS run; requires a real assistive technology session. |
 | Voice / microphone path | NOT TESTED | Unchanged by this pass; requires real browser + microphone hardware. |
