@@ -46,16 +46,73 @@ Image analysis, recorded-audio transcription, and speech fallback are separate u
 
 The automatic GitHub workflow runs type checking, lint, tests, and production build on pushes and pull requests. It has not run from this local package yet. The Windows runner used for this repair denied the esbuild child process (`spawn EPERM`), so its tests and production build remain unverified until CI runs.
 
-## Free alternative: Cloudflare Pages
+## Cloudflare Pages (chosen host)
 
-This static Vite app can also deploy from the existing GitHub repository to Cloudflare Pages:
+The app is a static Vite build, so Cloudflare runs two commands and serves the
+result. Nothing server-side is required for the app itself.
 
-1. In Cloudflare, open **Workers & Pages → Create application → Pages → Connect to Git** and select the GitHub repository.
-2. Set build command to `npm run build` and build output directory to `dist`. The repository's `.nvmrc` selects Node 22.
-3. After Cloudflare assigns the project URL, add `PUBLIC_SITE_URL` in the Pages build environment, for example `https://your-project.pages.dev`, then redeploy. This ensures SEO metadata points to the permanent project URL rather than a one-off preview URL.
-4. Add only public `VITE_SUPABASE_URL` and `VITE_SUPABASE_ANON_KEY` variables if needed. Keep model secrets in Supabase Edge Function Secrets.
+### 1. Push the source to GitHub
 
-Cloudflare's documented Free Pages allowance is 500 deployments per month, one build at a time. It supports custom domains, but a `.com` must already be owned/registered. See the current [Cloudflare Pages limits](https://developers.cloudflare.com/pages/platform/limits/) and [custom-domain setup](https://developers.cloudflare.com/pages/configuration/custom-domains/).
+The Cloudflare project connects to a Git repository. Push this branch (or merge
+it to `main` and push that) — never upload `dist/`, a ZIP, or build output.
+
+### 2. Create the project
+
+1. Cloudflare dashboard → **Workers & Pages → Create application → Pages →
+   Connect to Git** → select the repository.
+2. **Production branch:** the branch you pushed (or `main` if you merged).
+3. **Build command:** `npm run build`
+4. **Build output directory:** `dist`
+5. **Node version:** `.nvmrc` pins Node 22 — set it in the build environment if
+   the project default is older.
+
+### 3. Environment variables (Settings → Environment variables → Production)
+
+| Variable | Required | Value |
+|----------|----------|-------|
+| `PUBLIC_SITE_URL` | **Yes** | `https://<your-project>.pages.dev` (later `https://yourdomain.com`) |
+| `VITE_SUPABASE_URL` | Only for accounts | your project URL (browser-safe) |
+| `VITE_SUPABASE_ANON_KEY` | Only for accounts | your anon key (browser-safe) |
+
+The build **fails on purpose** if `PUBLIC_SITE_URL` is missing — that is
+`scripts/sync-seo-origin.mjs` refusing to publish canonical, `robots.txt` and
+`sitemap.xml` pointing at the wrong host. Set it before the first build, and
+again after you attach a custom domain.
+
+Never add `SUPABASE_SERVICE_ROLE_KEY`, `SUPABASE_DB_URL` or `LLM_API_KEY` to
+Pages. Those belong in Supabase, not in a static host.
+
+### 4. Deploy and verify
+
+1. Deploy, then note the assigned URL (`https://<project>.pages.dev`).
+2. Open it, refresh a deep link such as `/#/anatomy`, and use back/forward.
+3. Confirm `/robots.txt` and `/sitemap.xml` show your final URL, not `localhost`.
+4. Check the console for errors and the Network tab for failed requests.
+5. Test sign-in and confirm one account cannot see another's saved records.
+
+### 5. Custom `.com` later
+
+**Workers & Pages → your project → Custom domains → Set up a custom domain**,
+then point DNS (apex `A` to Cloudflare's target, `www` CNAME). Afterwards set
+`PUBLIC_SITE_URL` to `https://yourdomain.com` and redeploy so SEO metadata and
+the sitemap move to the real domain.
+
+Cloudflare's free Pages allowance is 500 builds/month, one build at a time.
+See [Pages limits](https://developers.cloudflare.com/pages/platform/limits/) and
+[custom domains](https://developers.cloudflare.com/pages/configuration/custom-domains/).
+
+## Getting found on Google
+
+1. **Google Search Console** → Add property → verify with a DNS TXT record →
+   submit `https://yourdomain.com/sitemap.xml`.
+2. **Bing Webmaster Tools** → same verification and sitemap (Bing also feeds
+   DuckDuckGo and Copilot).
+3. Validate social cards with LinkedIn's and Twitter's card validators — the
+   share image is `icon-512.png` unless a dedicated 1200×630 image is added.
+4. Indexing usually takes days to weeks, and no one can guarantee a ranking.
+5. Routes are hash-based (`/#/curemap`), so **only `/` is a crawlable URL**.
+   Search engines will not index each module separately; the public homepage is
+   what carries the description.
 
 ## Routes and search metadata
 
