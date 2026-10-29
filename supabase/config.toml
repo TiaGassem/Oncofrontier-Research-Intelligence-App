@@ -1,0 +1,4 @@
+# Supabase project configuration
+
+[functions.companion-chat]
+verify_jwt = true

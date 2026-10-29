@@ -1,0 +1,23 @@
+{
+  "name": "ONCOFRONTIER — Pan-Cancer Research Intelligence",
+  "short_name": "ONCOFRONTIER",
+  "description": "AI research assistant and companion chat for cancer research discovery, literature, and patient education — built on real, verifiable sources.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#16293f",
+  "theme_color": "#16293f",
+  "icons": [
+    {
+      "src": "/icon-512.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}

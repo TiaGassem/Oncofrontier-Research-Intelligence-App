@@ -21,3 +21,7 @@ dist-ssr
 *.sln
 *.sw?
 .env
+
+# Local recovery point and staging artifacts (never part of the app)
+_archive/
+.audit/

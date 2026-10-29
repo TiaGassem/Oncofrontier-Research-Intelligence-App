@@ -6,6 +6,18 @@ The application is a Vite, React, and TypeScript single-page app. The user-provi
 
 The project includes Netlify build and SPA-fallback configuration. Build command: `npm run build`; publish directory: `dist`.
 
+## Repository layout
+
+The application source now lives at the repository root (`src/`, `public/`,
+`index.html`, `vite.config.ts`). The previous root contained only build output;
+those files were preserved under `_archive/build-output/` along with the original
+source ZIPs, and that folder is git-ignored. Build from the root.
+
+`PUBLIC_SITE_URL` is required for a production build: the post-build step
+(`scripts/sync-seo-origin.mjs`) rewrites canonical, Open Graph, `robots.txt` and
+`sitemap.xml` to that origin and fails the build rather than publishing the wrong
+host. Set it to the final HTTPS domain before building outside Netlify.
+
 ## Environment
 
 Add these only in the hosting provider's private environment settings when account features are required:

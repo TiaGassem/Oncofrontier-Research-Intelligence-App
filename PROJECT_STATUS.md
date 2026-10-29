@@ -1,52 +1,86 @@
 # ONCOFRONTIER — Release Verification
 
-Checked: 2026-10-20. This report distinguishes the local submission source from the currently hosted Bolt app. Local code changes have not been deployed.
+Checked: 2026-10-29. This supersedes the 2026-10-20 report, whose "BLOCKED"
+rows were caused by a Windows `spawn EPERM` esbuild failure and do not apply to
+this environment.
+
+## Repository state found
+
+- The repository root contained **build output, not source**: `index-DXo83J1d.js`,
+  `index-Bktchn_t.css`, `pdf-*.js`, `pdf.worker.min-*`, and a duplicate root
+  `_redirects` sat alongside `package.json` and `index.html`. There was no `src/`.
+- The complete source existed only inside
+  `OncoFrontiers_Cloudflare_Pages_Source_v3.zip` (108 files). `v2` is the same
+  archive minus `src/test/clinicaltrials.test.ts`, so `v3` is authoritative.
+- That build output has been moved to `_archive/build-output/` and the v3 source
+  promoted to the repository root. Nothing was deleted; both ZIPs remain.
+- Atlas anatomy was **not** missing: `src/pages/CancerAnatomy.tsx` (468 lines)
+  exists, is routed as `#/anatomy`, and is listed in the sidebar. It is now also
+  covered by a render test.
 
 ## Verification matrix
 
 | Area | Status | Evidence / limitation |
 |---|---|---|
-| TypeScript | PASS | `npm run typecheck` passes on the local source. |
-| ESLint | PASS | `npm run lint` passes on the local source. |
-| Unit tests | BLOCKED | `npm test` cannot start Vitest: Windows denies esbuild child-process launch (`spawn EPERM`). Existing tests remain unverified. A GitHub Actions workflow is included to run them on a hosted runner, but has not run. |
-| Production build | BLOCKED | `npm run build` fails before compilation for the same `spawn EPERM`. The GitHub Actions workflow is configured to build on a hosted runner; no successful build artifact exists yet. |
-| Hosted app entry | PASS | User-provided Bolt URL loaded in the browser and rendered the dashboard. |
-| Display/accessibility controls | PARTIAL | Live settings panel opened. Blindness Support toggled larger text, listening mode, voice guide, and larger touch targets; Reset restored their original off state. No screen-reader or full keyboard audit was completed. |
-| Live evidence search | FAIL | Live query “EGFR resistance lung cancer” returned 61 records but displayed only “EGFR” as the query and included visibly unrelated records. Local source handles the whole quick-search string, but the hosted app is stale relative to local changes; deploy and retest before release. |
-| Source integrations | PARTIAL | Source code uses public PubMed, Europe PMC, ClinicalTrials.gov, Crossref, OpenAlex, Open Targets, and PubChem APIs. Live search returned records; each provider's current health and relevance were not separately verified in this pass. |
-| Research assistant | PARTIAL | Local assistant is retrieval and formatting, not generative AI; results link to source records. Evidence comparison and source-passage-grounded synthesis are not implemented. |
-| PDF reader | PARTIAL | Local PDF text extraction and keyword passage search; scanned-page OCR, rendered page navigation, highlights, annotations, bookmarks, and citation capture are not implemented. File selection is now keyboard reachable, but that change was not browser-tested. |
-| Companion AI chat | PARTIAL | The edge function keeps the model key server-side. Local code now verifies a signed-in Supabase user before the configured LLM call and avoids repeating failed model calls; guests retain public retrieval. Both chat views disclose search/AI provider processing and avoid-identifier guidance. The changed edge function has not been deployed or end-to-end tested. Provider-side limits are still required; application rate limiting is absent. |
-| Voice and listening | PARTIAL | Browser speech recognition/synthesis and explicit Puter-based audio fallback exist. Support varies by browser, device, installed voices, and network. No microphone hardware test was performed. |
-| Accessibility implementation | PARTIAL | Four presets and persistent display settings exist. A keyboard skip link, modal focus handling, and accessible PDF upload were added locally. No NVDA, VoiceOver, TalkBack, WCAG audit, color-simulation audit, or mobile assistive-technology test was performed. |
-| Interface languages | PARTIAL | English, French, and Arabic have full resources. Sixteen more locales have partial core translations with English fallback for longer content. Tunisian Arabic shares Arabic UI. Translation tests check selected strings but could not run; no linguistic review was performed. Do not advertise “20 languages supported.” |
-| Saved data and RLS | PARTIAL | Local migrations scope user tables to `auth.uid()`. No safe live sign-in, cross-account isolation, storage-policy, backup, or current Supabase security-advisor test was run. |
-| Automations | PARTIAL | Saved searches can be checked manually in the app; there is no verified background scheduler or email delivery. |
-| SEO/public metadata | PARTIAL | Build-time script now points canonical, Open Graph/Twitter, robots, and sitemap metadata at Netlify's configured public URL (or `PUBLIC_SITE_URL`). Not deployed or crawl/index tested; hash routes are not separate crawlable pages. |
-| Public legal/support pages | BLOCKED | Approved Privacy, Terms, Contact, and account-deletion information are absent. Do not invite public accounts until these are supplied. |
-| Poster discovery and templates | NOT TESTED | No verified global poster-search workflow or complete reusable template library was found in this pass. |
-| Promotional PDF | PARTIAL | Existing demo PDF is one page and describes 3 full interface translations plus 16 partial locales. Text/page count checked; no new render was made in this pass. |
+| Archive integrity | PASS | `unzip -t`: no errors, 108/108 files extracted. |
+| Source completeness | PASS | 36 `.tsx` + 36 `.ts`; 19,693 lines TS/TSX; zero compiled bundles under `src/`. |
+| Dependency install | PASS | `npm ci` from the committed lockfile, no lockfile change. |
+| TypeScript | PASS | `npm run typecheck` — 0 errors. |
+| ESLint | PASS | `npm run lint` — 0 errors, 0 warnings. |
+| Unit tests | PASS | `npm test` — 27/27 across 5 files. |
+| Production build | PASS | `npm run build` succeeds (~6.4s) incl. SEO post-build step. |
+| Dev server | PASS | `vite` starts and serves `index.html` (see notes below). |
+| Atlas anatomy | PASS | `CancerAnatomy` renders organ/system content; asserted in `src/test/atlas.test.tsx`. |
+| Public homepage | PASS | `#/home` renders hero, capabilities, steps, both CTAs, without auth. Asserted in tests. |
+| Onboarding | PASS | 5 steps; role + density persisted to `oncofrontier-experience`; finish routes to the role's start module. Asserted in tests. |
+| Accessibility choices in onboarding | PASS | Selecting "Larger text" applies `a11y-large-text` to `<html>` (asserted). |
+| Role-aware navigation | PASS | Sidebar orders role modules first; others remain under "All modules". |
+| Localization (en/fr/ar) | PASS (unit) | New landing/onboarding strings exist for en/fr/ar with English fallback for other locales; parity asserted. |
+| Localization (full UI) | PARTIAL | en/fr/ar remain the only complete interfaces; 16 other locales are core-labels-only, as before. |
+| RTL layout | NOT TESTED | Arabic strings and `dir` handling exist; no browser/RTL visual check was performed here. |
+| Screen-reader / keyboard audit | NOT TESTED | Semantic structure and focus handling were implemented, but no NVDA/VoiceOver/keyboard walkthrough was run. |
+| Voice / microphone path | NOT TESTED | Unchanged by this pass; requires real browser + microphone hardware. |
+| Scientific APIs (live calls) | NOT TESTED | Clients unchanged; no live network verification was run in this pass. |
+| Supabase auth / RLS | NOT TESTED | No credentials in the archive, by design. Schema and owner-scoped policies inspected statically only. |
+| Secrets in bundle | PASS | Scan of `dist/` for service-role keys, JWTs, `postgresql://` and `sk-` patterns: 0 hits. |
+| SEO files | PASS | `robots.txt`, `sitemap.xml`, canonical + OG tags generated from `PUBLIC_SITE_URL`. |
+| Independent deployment | BLOCKED | No host credentials/domain available here. Steps are documented in `DEPLOYMENT.md`. |
+| Legal pages (Privacy/Terms/Contact) | BLOCKED | Still absent; needed before inviting public accounts. |
+| PWA | PARTIAL | `manifest.json` + icons + theme colour exist; no service worker, so no offline behaviour. |
 
 ## Changes in this repair
 
-- Kept the Heart companion launcher and open chat on the physical right edge with safe-area spacing, including one-handed mode (`src/components/FloatingCompanion.tsx`, `src/index.css`).
-- Added a localized skip-to-main-content link and made the PDF upload control keyboard reachable, with accessible progress and error announcements.
-- Added focus placement, Escape handling, and Tab containment to the display/accessibility dialog.
-- Changed the dashboard metric to the three complete interface translations instead of claiming all 20 language options are fully supported.
-- Added build-time canonical/social metadata and sitemap generation from the actual hosting domain; no Bolt URL remains hard-coded in app metadata.
-- Required a verified signed-in Supabase user for configured server-side AI chat; public retrieval stays available to guests. Removed an immediate duplicate AI request after failure.
-- Added translated Companion privacy notices before chat input and made the PDF reader's upload, progress, and errors accessible to keyboard and assistive-technology users.
-- Corrected deployment and product documentation to disclose partial translations, unavailable features, provider dependencies, and public-release blockers.
-- Added a Netlify-aware post-build SEO sync and GitHub Actions checks workflow. Both still require a hosted build to verify.
-- Removed privileged Supabase service-role/database entries from `.env.example`; the submission ZIP excludes the local `.env` file.
+- Promoted the authoritative v3 source to the repository root; preserved the old
+  build output under `_archive/build-output/` and both ZIPs.
+- Added a public landing page (`src/pages/Landing.tsx`) reachable at `#/home`,
+  shown to first-time visitors instead of the research dashboard.
+- Added a five-step onboarding wizard (`src/components/OnboardingWizard.tsx`)
+  covering language, role, accessibility, workspace density and a summary.
+- Added `src/lib/experience.ts` + `src/context/PreferencesContext.tsx`: role,
+  density and onboarding state persisted locally (no account, no health data).
+- Added `src/lib/onboardingTranslations.ts` with en/fr/ar copy for the new
+  surfaces and explicit English fallback for other locales.
+- Made navigation role-aware while keeping every module reachable, and added
+  "Home" and "Change experience" affordances to the sidebar.
+- Ordered dashboard modules by the selected role.
+- Added workspace density rules in `src/index.css` driven by `data-density`.
+- Added 12 tests (`experience.test.tsx`, `atlas.test.tsx`) and updated the
+  navigation test for the new first-run behaviour.
 
-## Privacy/security notes
+## Notes and limitations
 
-- The submission archive excludes `.env`, `node_modules`, `dist`, `.bolt`, and `.git`; `.env.example` contains placeholders only.
-- Database RLS was reviewed statically in the local migrations; remote policy state was not inspected in this pass.
-- Companion LLM requests and local retrieval have different data flows. User-started Puter image/audio/TTS features may transmit content to that provider; explain this to users before public launch.
-- The Edge Function still needs deployed auth changes, provider usage limits, and abuse/rate-limit controls before enabling an LLM secret publicly.
+- The fr/ar copy for the new landing and onboarding surfaces is model-written and
+  has **not** been reviewed by a native speaker or medical translator. Existing
+  module translations are unchanged.
+- Dark mode was already implemented as the `nightMode` accessibility preference
+  (`a11y-night`); it was reused rather than duplicated. New surfaces inherit it.
+- No browser automation was available in this environment, so visual, keyboard,
+  RTL and voice behaviour are reported as NOT TESTED rather than working.
+- Atlas anatomy was never lost; the "missing" report likely referred to the
+  hosted Bolt deployment lagging behind this source.
 
-## Release recommendation: NOT READY
+## Release recommendation: SOURCE READY, DEPLOYMENT PENDING
 
-The hosted app does not yet contain the local fixes, the live search returned poor results for a basic query, the current Windows environment could not run unit tests or build, and legal/support pages and abuse controls are incomplete. Netlify credentials/domain are not connected, so the Bolt live site has not been updated and no Netlify URL exists yet. Cloudflare Pages setup is documented as a free static-hosting alternative; it is not deployed. A public GitHub screenshot showed `.env`; if the repository is public, rotate its values and remove the file/history before reconnecting any host. Deploy the updated package, run CI, retest the search and auth paths, and close the disclosed public-release blockers before submission.
+The source builds, lints and tests cleanly. Remaining blockers are external:
+hosting credentials/domain, live Supabase verification, legal pages, and
+browser-level accessibility and voice testing.

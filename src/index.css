@@ -1,0 +1,388 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --navy-950: #0d1a2b;
+  --navy-900: #16293f;
+  --navy-800: #1c3856;
+  --navy-700: #23456b;
+  --navy-600: #2c5483;
+  --navy-500: #3b6a9e;
+  --navy-400: #5b87b8;
+  --navy-300: #8baed3;
+  --navy-200: #b8d0e6;
+  --navy-100: #dce8f3;
+  --navy-50: #f0f5fa;
+  --teal-500: #14a89a;
+  --teal-400: #2cc3b1;
+  --teal-300: #5ddcca;
+  --teal-200: #98eddf;
+  --teal-100: #cbf7ef;
+  --teal-50: #effcf9;
+
+  /* Color-vision-safe chart palette (default).
+     Chosen so adjacent hues differ in lightness, not just hue: series remain
+     distinguishable under deuteranopia/protanopia/tritanopia. Consumers get
+     non-color distinction too (shapes/labels) via the chart components. */
+  --chart-1: #537aa0; /* dusty blue */
+  --chart-2: #d9a441; /* ochre (dark yellow — distinct in red-green CVD) */
+  --chart-3: #8a7fc0; /* muted violet-blue */
+  --chart-4: #4f9d8c; /* sage-teal */
+  --chart-5: #c07a7a; /* muted rose */
+  --chart-6: #7a9e4f; /* olive */
+}
+
+/* High-contrast chart palette: darker, more separated lightness steps */
+.a11y-high-contrast {
+  --chart-1: #2c4a6b;
+  --chart-2: #8a5a00;
+  --chart-3: #4a3a80;
+  --chart-4: #1f5c50;
+  --chart-5: #7c2d2d;
+  --chart-6: #3d5c1f;
+}
+
+html {
+  font-family: 'Inter', system-ui, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  scroll-behavior: smooth;
+}
+
+body {
+  margin: 0;
+  background: #f7f5f1; /* warm paper — softer than pure white */
+  color: #16293f;
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: #dce8f3;
+  border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #b8d0e6;
+}
+
+/* Focus styles — always visible, in every theme */
+*:focus-visible {
+  outline: 3px solid #0d877c;
+  outline-offset: 2px;
+}
+.a11y-high-contrast *:focus-visible {
+  outline: 3px solid #16293f;
+  outline-offset: 2px;
+}
+.a11y-night.a11y-high-contrast *:focus-visible {
+  outline-color: #ffe27a;
+}
+
+/* Prose for methodology */
+.prose-onco {
+  max-width: 70ch;
+}
+.prose-onco h2 {
+  font-size: 1.5rem;
+  font-weight: 600;
+  margin-top: 2rem;
+  margin-bottom: 0.75rem;
+  color: #16293f;
+}
+.prose-onco h3 {
+  font-size: 1.25rem;
+  font-weight: 600;
+  margin-top: 1.5rem;
+  margin-bottom: 0.5rem;
+  color: #1c3856;
+}
+.prose-onco p {
+  line-height: 1.6;
+  margin-bottom: 1rem;
+  color: #23456b;
+}
+.prose-onco ul {
+  list-style: disc;
+  padding-left: 1.5rem;
+  margin-bottom: 1rem;
+}
+.prose-onco li {
+  line-height: 1.6;
+  margin-bottom: 0.25rem;
+  color: #23456b;
+}
+
+/* ─── Accessibility preferences (toggled from the sidebar menu) ─────────── */
+
+.a11y-large-text {
+  font-size: 112.5%;
+}
+
+.a11y-large-text .text-xs { font-size: 0.875rem; }
+.a11y-large-text .text-sm { font-size: 1rem; }
+.a11y-large-text .text-\[10px\] { font-size: 0.75rem; }
+
+.a11y-high-contrast {
+  filter: contrast(1.25) saturate(1.1);
+}
+
+.a11y-high-contrast main .text-navy-300,
+.a11y-high-contrast main .text-navy-400,
+.a11y-high-contrast main .text-navy-500,
+.a11y-high-contrast .bg-white .text-navy-300,
+.a11y-high-contrast .bg-white .text-navy-400,
+.a11y-high-contrast .bg-white .text-navy-500 {
+  color: #1c3856;
+}
+.a11y-high-contrast .bg-navy-50 {
+  background-color: #ffffff;
+}
+.a11y-high-contrast .border-navy-100,
+.a11y-high-contrast .border-navy-200 {
+  border-color: #8baed3;
+}
+.a11y-high-contrast a { text-decoration: underline; text-underline-offset: 0.15em; }
+.a11y-high-contrast button,
+.a11y-high-contrast input,
+.a11y-high-contrast select,
+.a11y-high-contrast textarea { border-width: 2px; }
+.a11y-high-contrast .bg-navy-800 *:focus-visible,
+.a11y-high-contrast .bg-navy-900 *:focus-visible { outline-color: #ffffff; }
+
+.a11y-reduced-motion *,
+.a11y-reduced-motion *::before,
+.a11y-reduced-motion *::after {
+  animation-duration: 0.01ms !important;
+  animation-iteration-count: 1 !important;
+  transition-duration: 0.01ms !important;
+  scroll-behavior: auto !important;
+}
+
+/* ─── Display & accessibility modes (toggled from the sidebar menu) ─────── */
+
+/* Night mode: real dark theme via design tokens — no filter tricks, so
+   position:fixed UI (sidebar, dialogs, floating chat) renders correctly. */
+.a11y-night {
+  background: #10161f;
+  color: #dbe4ee;
+}
+.a11y-night body {
+  background: #10161f;
+  color: #dbe4ee;
+}
+.a11y-night .bg-navy-50,
+.a11y-night .bg-navy-50\/30 {
+  background-color: #161e29;
+}
+.a11y-night .bg-navy-100 { background-color: #202b37; }
+.a11y-night .bg-white {
+  background-color: #1b2530;
+}
+.a11y-night .bg-teal-50,
+.a11y-night .bg-teal-100 {
+  background-color: #12282a;
+}
+.a11y-night .bg-teal-500,
+.a11y-night .bg-teal-600 { background-color: #0e7169; }
+.a11y-night .bg-teal-400 { background-color: #0e7169; }
+.a11y-night .bg-red-50 { background-color: #2b1416; }
+.a11y-night .bg-red-100 { background-color: #3a1a1d; }
+.a11y-night .bg-amber-50,
+.a11y-night .bg-amber-50\/70 { background-color: #2a2213; }
+.a11y-night .bg-green-50,
+.a11y-night .bg-green-100 { background-color: #14271d; }
+.a11y-night .bg-blue-50 { background-color: #14202e; }
+.a11y-night .bg-blue-100 { background-color: #1d3043; }
+.a11y-night .bg-gray-50,
+.a11y-night .bg-gray-100 { background-color: #202a35; }
+.a11y-night .bg-red-400,
+.a11y-night .bg-red-500,
+.a11y-night .bg-red-600,
+.a11y-night .bg-red-700 { background-color: #963f46; }
+.a11y-night .text-navy-900,
+.a11y-night .text-navy-800 { color: #e6edf5; }
+.a11y-night .text-navy-700,
+.a11y-night .text-navy-600 { color: #c3ceda; }
+.a11y-night .text-navy-500 { color: #aab8c7; }
+.a11y-night .text-navy-400 { color: #91a2b4; }
+.a11y-night .text-navy-300 { color: #7f92a5; }
+.a11y-night .text-navy-200 { color: #d0dbe6; }
+.a11y-night .text-navy-100 { color: #bdcbd9; }
+.a11y-night .text-teal-600,
+.a11y-night .text-teal-700,
+.a11y-night .text-teal-800 { color: #7cdbcc; }
+.a11y-night .text-red-600,
+.a11y-night .text-red-700,
+.a11y-night .text-red-800,
+.a11y-night .text-red-900 { color: #ff9b9b; }
+.a11y-night .text-amber-600,
+.a11y-night .text-amber-700,
+.a11y-night .text-amber-800,
+.a11y-night .text-amber-900 { color: #f3ca73; }
+.a11y-night .text-green-600,
+.a11y-night .text-green-700,
+.a11y-night .text-green-800 { color: #92d7a3; }
+.a11y-night .text-blue-600,
+.a11y-night .text-blue-700,
+.a11y-night .text-blue-800 { color: #8fc7ff; }
+.a11y-night .text-teal-300,
+.a11y-night .text-teal-400 { color: #83dece; }
+.a11y-night .text-teal-500 { color: #7cdbcc; }
+.a11y-night .border-navy-100,
+.a11y-night .border-navy-200 { border-color: #2a3644; }
+.a11y-night .border-navy-50 { border-color: #222c38; }
+.a11y-night .border-teal-100,
+.a11y-night .border-teal-200,
+.a11y-night .border-red-100,
+.a11y-night .border-red-200,
+.a11y-night .border-amber-100,
+.a11y-night .border-amber-200 { border-color: #3c4957; }
+.a11y-night .placeholder-navy-300::placeholder { color: #56697c; }
+.a11y-night input,
+.a11y-night select,
+.a11y-night textarea { color-scheme: dark; }
+/* Dark gradient surfaces already used by headers/cards stay as-is. */
+
+/* Anti blue-light: warm amber tint, no layout change. Intensity comes from
+   the user's slider via --warm-alpha (0–0.40). Charts and images keep full
+   color fidelity — the overlay excludes them so data colors stay readable. */
+.a11y-blue-light body::after {
+  content: '';
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 1;
+  background: rgba(255, 147, 41, var(--warm-alpha, 0.14));
+  mix-blend-mode: multiply;
+}
+/* Scientific imagery: exempt from the warm overlay so charts, microscopy,
+   and color-coded medical data keep accurate colors (overlay sits above but
+   charts/images get a normal blend above the tint via their own stacking). */
+.a11y-blue-light [data-chart],
+.a11y-blue-light .recharts-wrapper,
+.a11y-blue-light .recharts-surface,
+.a11y-blue-light svg[role='img'],
+.a11y-blue-light canvas,
+.a11y-blue-light img {
+  isolation: isolate;
+  position: relative;
+  z-index: 2;
+  mix-blend-mode: normal;
+}
+.a11y-blue-light .animate-fade-in,
+.a11y-blue-light .animate-slide-up { animation: none !important; }
+
+/* Daltonism: grayscale-safe chart palette — lightness steps carry the
+   distinction instead of hue. */
+.a11y-daltonism {
+  --chart-1: #4d4d4d;
+  --chart-2: #b3b3b3;
+  --chart-3: #8c8c8c;
+  --chart-4: #666666;
+  --chart-5: #333333;
+  --chart-6: #a6a6a6;
+}
+
+/* Reading mode: wider line-height and comfortable measure. */
+.a11y-reading p,
+.a11y-reading li,
+.a11y-reading span {
+  line-height: 1.9;
+}
+.a11y-reading p,
+.a11y-reading li { max-width: 70ch; }
+
+/* Dyslexia-friendly: readable font and wider letter/word spacing while
+   preserving the language's natural text direction. */
+.a11y-dyslexia {
+  font-family: 'Verdana', 'Tahoma', 'Arial', system-ui, sans-serif;
+  letter-spacing: 0.05em;
+  word-spacing: 0.12em;
+}
+.a11y-dyslexia p,
+.a11y-dyslexia li,
+.a11y-dyslexia h1,
+.a11y-dyslexia h2,
+.a11y-dyslexia h3 {
+  text-align: start !important;
+  line-height: 1.9;
+}
+.a11y-dyslexia * {
+  font-style: normal !important;
+}
+
+/* Large targets: bigger buttons and inputs for tremor or limited hand use. */
+.a11y-large-targets button,
+.a11y-large-targets a,
+.a11y-large-targets input,
+.a11y-large-targets textarea,
+.a11y-large-targets select {
+  min-height: 2.75rem;
+  min-width: 2.75rem;
+}
+.a11y-large-targets button {
+  font-size: 0.95rem;
+}
+
+/* One-handed: extra scroll space for floating controls on phones. */
+.a11y-one-handed main {
+  padding-bottom: 6rem;
+}
+.a11y-one-handed button,
+.a11y-one-handed a,
+.a11y-one-handed input,
+.a11y-one-handed select { scroll-margin-block: 5rem; }
+
+/* Night mode: dark surfaces for dark navy chrome (sidebar, headers). */
+.a11y-night .bg-navy-900,
+.a11y-night .bg-navy-800 {
+  background-color: #0d131c;
+}
+.a11y-night .from-navy-900,
+.a11y-night .from-navy-800 {
+  --tw-gradient-from: #10161f;
+}
+.a11y-night .to-navy-800,
+.a11y-night .to-navy-700 {
+  --tw-gradient-to: #16202b;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* ─── Workspace density (chosen during onboarding) ───────────────────────── */
+
+/* Simple: narrower measure and roomier lines so a first-time visitor is not
+   faced with a wall of text. Advanced: wider canvas for dense research work. */
+html[data-density='simple'] main > div {
+  max-width: 56rem;
+}
+html[data-density='simple'] main p {
+  line-height: 1.85;
+}
+html[data-density='advanced'] main > div {
+  max-width: 82rem;
+}
+
+/* Secondary detail that simple density suppresses. Opt-in per element so no
+   information is lost in the standard and advanced densities. */
+html[data-density='simple'] .density-secondary {
+  display: none;
+}

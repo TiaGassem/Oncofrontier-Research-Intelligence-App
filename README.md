@@ -203,6 +203,29 @@ npm run build
 
 Deploy the `dist/` folder to Netlify (or any static host with SPA fallback). Configure the two `VITE_SUPABASE_*` variables in the host environment only when private account features are needed. Never expose service-role or database credentials in frontend environment variables.
 
+## Public site, onboarding, and personalization
+
+Added on top of the existing modules. Nothing was removed or replaced.
+
+- **Public homepage** (`#/home`) — explains the platform, names the connected
+  data sources, and works without an account. A first-time visitor lands here
+  instead of the research dashboard.
+- **Onboarding** (`#/welcome`) — five steps: language, intended use,
+  accessibility preferences, workspace density, and a summary. Choices are
+  written to the real preference stores, so they change the interface.
+- **Role-aware navigation** — the sidebar shows the modules that match the chosen
+  role first and keeps every other module under "All modules".
+- **Workspace density** — simple / standard / advanced controls reading width and
+  whether secondary detail is shown.
+- **Change experience** — the sidebar link reopens onboarding without touching
+  saved data.
+- **Dark mode** reuses the existing `nightMode` accessibility preference rather
+  than adding a second theme system.
+
+New files: `src/pages/Landing.tsx`, `src/components/OnboardingWizard.tsx`,
+`src/lib/experience.ts`, `src/context/PreferencesContext.tsx`,
+`src/lib/onboardingTranslations.ts`.
+
 ## Known limitations
 
 - Email research alerts are not implemented; automations check manually.
