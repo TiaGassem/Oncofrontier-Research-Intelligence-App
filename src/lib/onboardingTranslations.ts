@@ -7,12 +7,13 @@
 // translations in lib/i18n.ts are unchanged.
 
 import type { Language } from '@/types';
-import type { ExperienceRole, WorkspaceDensity } from '@/lib/experience';
+import type { ExperienceRole, TemplateId, WorkspaceDensity } from '@/lib/experience';
 
 export interface SurfaceStrings {
   landing: {
     heroEyebrow: string;
-    heroTitle: string;
+    heroLine1: string;
+    heroLine2: string;
     heroLead: string;
     ctaStart: string;
     ctaLearn: string;
@@ -50,6 +51,17 @@ export interface SurfaceStrings {
     a11yLead: string;
     a11yOptions: { key: A11yOptionKey; label: string; body: string }[];
     a11yNote: string;
+    modes: {
+      title: string;
+      night: string;
+      day: string;
+      antiUv: string;
+      daltonism: string;
+      contrast: string;
+      motion: string;
+    };
+    templateLead: string;
+    templates: Record<TemplateId, { label: string; body: string }>;
     densityTitle: string;
     densityLead: string;
     densities: Record<WorkspaceDensity, { label: string; body: string }>;
@@ -59,6 +71,7 @@ export interface SurfaceStrings {
     summaryRole: string;
     summaryA11y: string;
     summaryDensity: string;
+    summaryTemplate: string;
     summaryA11yNone: string;
     summaryA11yCount: string;
     back: string;
@@ -86,7 +99,8 @@ export type A11yOptionKey =
 const en: SurfaceStrings = {
   landing: {
     heroEyebrow: 'Independent research technology',
-    heroTitle: 'Cancer research, explained clearly.',
+    heroLine1: 'Cancer research,',
+    heroLine2: 'explained clearly.',
     heroLead:
       'Published literature, clinical trials, drug and target data, and plain-language cancer education in one calm workspace — grounded in real sources you can open yourself.',
     ctaStart: 'Get started',
@@ -156,6 +170,21 @@ const en: SurfaceStrings = {
       { key: 'oneHanded', label: 'One-handed layout', body: 'Extra room around floating controls.' },
     ],
     a11yNote: 'These are preferences, not categories. Combine them however you like.',
+    modes: {
+      title: 'Appearance',
+      night: 'Night mode',
+      day: 'Day mode',
+      antiUv: 'Anti-UV warm filter',
+      daltonism: 'Colour-blind friendly',
+      contrast: 'High contrast',
+      motion: 'Reduced motion',
+    },
+    templateLead: 'Pick a visual template, then how much detail you want at once.',
+    templates: {
+      scientific: { label: 'Scientific', body: 'Dense and precise — the default for research work.' },
+      comfort: { label: 'Eye comfort', body: 'Larger text, warmer colours, looser spacing.' },
+      creative: { label: 'Creative', body: 'A brighter accent palette with the same clear layout.' },
+    },
     densityTitle: 'Choose your workspace style',
     densityLead: 'How much detail the workspace shows at once.',
     densities: {
@@ -169,6 +198,7 @@ const en: SurfaceStrings = {
     summaryRole: 'Experience',
     summaryA11y: 'Accessibility',
     summaryDensity: 'Workspace',
+    summaryTemplate: 'Template',
     summaryA11yNone: 'Defaults',
     summaryA11yCount: '{n} enabled',
     back: 'Back',
@@ -185,7 +215,8 @@ const en: SurfaceStrings = {
 const fr: SurfaceStrings = {
   landing: {
     heroEyebrow: 'Technologie de recherche indépendante',
-    heroTitle: 'La recherche sur le cancer, expliquée clairement.',
+    heroLine1: 'La recherche sur le cancer,',
+    heroLine2: 'expliquée clairement.',
     heroLead:
       'Littérature scientifique, essais cliniques, données sur les médicaments et les cibles, et éducation grand public en langage simple dans un espace de travail calme — appuyé sur de vraies sources que vous pouvez ouvrir vous-même.',
     ctaStart: 'Commencer',
@@ -255,6 +286,21 @@ const fr: SurfaceStrings = {
       { key: 'oneHanded', label: 'Mise en page à une main', body: 'Plus d’espace autour des contrôles flottants.' },
     ],
     a11yNote: 'Ce sont des préférences, pas des catégories. Combinez-les librement.',
+    modes: {
+      title: 'Apparence',
+      night: 'Mode sombre',
+      day: 'Mode clair',
+      antiUv: 'Filtre anti-UV',
+      daltonism: 'Compatible daltonisme',
+      contrast: 'Contraste élevé',
+      motion: 'Réduire les animations',
+    },
+    templateLead: 'Choisissez un modèle visuel, puis la quantité de détail souhaitée.',
+    templates: {
+      scientific: { label: 'Scientifique', body: 'Dense et précis — la valeur par défaut du travail de recherche.' },
+      comfort: { label: 'Confort visuel', body: 'Texte plus grand, couleurs plus chaudes, espacement aéré.' },
+      creative: { label: 'Créatif', body: 'Palette d’accent plus vive avec la même mise en page claire.' },
+    },
     densityTitle: 'Choisissez le style de votre espace',
     densityLead: 'La quantité de détail affichée à la fois.',
     densities: {
@@ -268,6 +314,7 @@ const fr: SurfaceStrings = {
     summaryRole: 'Expérience',
     summaryA11y: 'Accessibilité',
     summaryDensity: 'Espace de travail',
+    summaryTemplate: 'Modèle',
     summaryA11yNone: 'Par défaut',
     summaryA11yCount: '{n} activées',
     back: 'Retour',
@@ -284,7 +331,8 @@ const fr: SurfaceStrings = {
 const ar: SurfaceStrings = {
   landing: {
     heroEyebrow: 'تقنية بحثية مستقلة',
-    heroTitle: 'أبحاث السرطان، بشرح واضح.',
+    heroLine1: 'أبحاث السرطان،',
+    heroLine2: 'بشرح واضح.',
     heroLead:
       'المنشورات العلمية والتجارب السريرية وبيانات الأدوية والأهداف والتثقيف الصحي بلغة مبسطة في مساحة عمل هادئة واحدة — مبنية على مصادر حقيقية يمكنك فتحها بنفسك.',
     ctaStart: 'ابدأ الآن',
@@ -354,6 +402,21 @@ const ar: SurfaceStrings = {
       { key: 'oneHanded', label: 'تخطيط بيد واحدة', body: 'مساحة إضافية حول العناصر العائمة.' },
     ],
     a11yNote: 'هذه تفضيلات وليست تصنيفات. اجمعها كما تريد.',
+    modes: {
+      title: 'المظهر',
+      night: 'الوضع الداكن',
+      day: 'الوضع الفاتح',
+      antiUv: 'مرشح ضد الأشعة',
+      daltonism: 'مناسب لعمى الألوان',
+      contrast: 'تباين عالٍ',
+      motion: 'تقليل الحركة',
+    },
+    templateLead: 'اختر قالبًا بصريًا، ثم مقدار التفاصيل الذي تريده.',
+    templates: {
+      scientific: { label: 'علمي', body: 'كثيف ودقيق — الخيار الافتراضي لعمل البحث.' },
+      comfort: { label: 'راحة العين', body: 'نص أكبر وألوان أدفأ وتباعد أوسع.' },
+      creative: { label: 'إبداعي', body: 'ألوان تمييز أفتح مع التخطيط نفسه.' },
+    },
     densityTitle: 'اختر نمط مساحة عملك',
     densityLead: 'مقدار التفاصيل المعروضة في وقت واحد.',
     densities: {
@@ -367,6 +430,7 @@ const ar: SurfaceStrings = {
     summaryRole: 'التجربة',
     summaryA11y: 'إمكانية الوصول',
     summaryDensity: 'مساحة العمل',
+    summaryTemplate: 'القالب',
     summaryA11yNone: 'الإعدادات الافتراضية',
     summaryA11yCount: '{n} مُفعّلة',
     back: 'رجوع',

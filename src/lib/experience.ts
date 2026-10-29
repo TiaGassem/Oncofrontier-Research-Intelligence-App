@@ -14,9 +14,13 @@ export type ExperienceRole =
 
 export type WorkspaceDensity = 'simple' | 'standard' | 'advanced';
 
+/** Visual template, applied as data-template on <html> (see index.css). */
+export type TemplateId = 'scientific' | 'comfort' | 'creative';
+
 export interface ExperiencePrefs {
   role: ExperienceRole;
   density: WorkspaceDensity;
+  template: TemplateId;
   onboarded: boolean;
 }
 
@@ -25,8 +29,11 @@ export const EXPERIENCE_STORAGE_KEY = 'oncofrontier-experience';
 export const DEFAULT_EXPERIENCE: ExperiencePrefs = {
   role: 'general',
   density: 'standard',
+  template: 'scientific',
   onboarded: false,
 };
+
+export const TEMPLATES: TemplateId[] = ['scientific', 'comfort', 'creative'];
 
 export const ROLES: ExperienceRole[] = [
   'researcher', 'clinician', 'patient', 'caregiver', 'industry', 'general',
@@ -102,6 +109,9 @@ export function loadExperience(): ExperiencePrefs {
       density: DENSITIES.includes(parsed.density as WorkspaceDensity)
         ? (parsed.density as WorkspaceDensity)
         : DEFAULT_EXPERIENCE.density,
+      template: TEMPLATES.includes(parsed.template as TemplateId)
+        ? (parsed.template as TemplateId)
+        : DEFAULT_EXPERIENCE.template,
       onboarded: parsed.onboarded === true,
     };
   } catch {

@@ -71,14 +71,14 @@ describe('surface translations', () => {
     const en = getSurfaceStrings('en');
     const fr = getSurfaceStrings('fr');
     const ar = getSurfaceStrings('ar');
-    expect(fr.landing.heroTitle).not.toBe(en.landing.heroTitle);
-    expect(ar.landing.heroTitle).not.toBe(en.landing.heroTitle);
+    expect(fr.landing.heroLine1).not.toBe(en.landing.heroLine1);
+    expect(ar.landing.heroLine1).not.toBe(en.landing.heroLine1);
     expect(ar.onboarding.next).not.toBe(en.onboarding.next);
     expect(ar.onboarding.summaryLanguage).toBeTruthy();
   });
 
   it('falls back to English for locales without these surfaces', () => {
-    expect(getSurfaceStrings('de').landing.heroTitle).toBe(getSurfaceStrings('en').landing.heroTitle);
+    expect(getSurfaceStrings('de').landing.heroLine1).toBe(getSurfaceStrings('en').landing.heroLine1);
   });
 
   it('does not claim a partial locale is complete', () => {
@@ -93,15 +93,32 @@ describe('public landing page', () => {
   it('renders the hero and both calls to action without an account', () => {
     render(
       <AppProvider>
-        <PreferencesProvider>
-          <Landing />
-        </PreferencesProvider>
+        <A11yProvider>
+          <PreferencesProvider>
+            <Landing />
+          </PreferencesProvider>
+        </A11yProvider>
       </AppProvider>
     );
     const s = getSurfaceStrings('en').landing;
-    expect(screen.getByRole('heading', { level: 1, name: s.heroTitle })).toBeTruthy();
+    const heading = screen.getByRole('heading', { level: 1 });
+    expect(heading.textContent).toContain(s.heroLine1);
+    expect(heading.textContent).toContain(s.heroLine2);
     expect(screen.getAllByRole('button', { name: s.ctaStart }).length).toBeGreaterThan(0);
     expect(screen.getByRole('link', { name: s.ctaLearn })).toBeTruthy();
+  });
+
+  it('exposes the appearance modes switcher', () => {
+    render(
+      <AppProvider>
+        <A11yProvider>
+          <PreferencesProvider>
+            <Landing />
+          </PreferencesProvider>
+        </A11yProvider>
+      </AppProvider>
+    );
+    expect(screen.getByRole('button', { name: /Appearance/i })).toBeTruthy();
   });
 });
 
@@ -122,6 +139,20 @@ describe('onboarding wizard', () => {
     expect(saved.role).toBe('patient');
     expect(saved.onboarded).toBe(true);
     expect(screen.getByTestId('view').textContent).toBe('companion');
+  });
+
+  it('applies a visual template immediately and keeps it after finishing', () => {
+    renderWizard();
+    fireEvent.click(screen.getByRole('button', { name: /Continue/ }));
+    fireEvent.click(screen.getByRole('button', { name: /Continue/ }));
+    fireEvent.click(screen.getByRole('button', { name: /Continue/ }));
+    fireEvent.click(screen.getByRole('radio', { name: /Eye comfort/ }));
+    expect(document.documentElement.dataset.template).toBe('comfort');
+    fireEvent.click(screen.getByRole('button', { name: /Continue/ }));
+    fireEvent.click(screen.getByRole('button', { name: /Enter OncoFrontiers/ }));
+    const saved = JSON.parse(localStorage.getItem(EXPERIENCE_STORAGE_KEY) ?? '{}');
+    expect(saved.template).toBe('comfort');
+    expect(saved.onboarded).toBe(true);
   });
 
   it('marks onboarding complete when the visitor skips', () => {

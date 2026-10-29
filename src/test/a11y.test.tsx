@@ -26,9 +26,11 @@ describe('automated accessibility rules', () => {
   it('public landing page has no serious or critical violations', async () => {
     const { container } = render(
       <AppProvider>
-        <PreferencesProvider>
-          <Landing />
-        </PreferencesProvider>
+        <A11yProvider>
+          <PreferencesProvider>
+            <Landing />
+          </PreferencesProvider>
+        </A11yProvider>
       </AppProvider>
     );
     expect(await seriousViolations(container)).toEqual([]);

@@ -6,8 +6,8 @@ import { useA11yPrefsContext } from '@/context/A11yContext';
 import { BrandMark } from '@/components/BrandMark';
 import { getSurfaceStrings, fillTemplate, type A11yOptionKey } from '@/lib/onboardingTranslations';
 import {
-  DENSITIES, LANGUAGE_CHOICES, ROLES, ROLE_START_VIEW,
-  type ExperienceRole, type WorkspaceDensity,
+  DENSITIES, LANGUAGE_CHOICES, ROLES, ROLE_START_VIEW, TEMPLATES,
+  type ExperienceRole, type TemplateId, type WorkspaceDensity,
 } from '@/lib/experience';
 import type { Language } from '@/types';
 
@@ -20,7 +20,7 @@ const TOTAL_STEPS = 5;
  */
 export function OnboardingWizard() {
   const { language, userLanguage, setLanguage, setCurrentView } = useApp();
-  const { role, density, complete } = usePreferences();
+  const { role, density, template, complete, setTemplate } = usePreferences();
   const { prefs: a11y, setPref } = useA11yPrefsContext();
   const s = getSurfaceStrings(language).onboarding;
 
@@ -186,32 +186,63 @@ export function OnboardingWizard() {
             )}
 
             {step === 3 && (
-              <fieldset>
-                <legend className="sr-only">{s.densityTitle}</legend>
-                <div className="grid gap-2 sm:grid-cols-3">
-                  {DENSITIES.map((d) => (
-                    <label
-                      key={d}
-                      className={`flex cursor-pointer flex-col gap-1.5 rounded-xl border p-4 ${
-                        selectedDensity === d ? 'border-teal-400 bg-teal-50' : 'border-navy-100 hover:border-navy-200'
-                      }`}
-                    >
-                      <span className="flex items-center gap-2">
-                        <input
-                          type="radio"
-                          name="onboarding-density"
-                          value={d}
-                          checked={selectedDensity === d}
-                          onChange={() => setSelectedDensity(d)}
-                          className="h-4 w-4 accent-teal-600"
-                        />
-                        <span className="text-sm font-semibold text-navy-900">{s.densities[d].label}</span>
-                      </span>
-                      <span className="text-xs leading-relaxed text-navy-600">{s.densities[d].body}</span>
-                    </label>
-                  ))}
-                </div>
-              </fieldset>
+              <>
+                <fieldset>
+                  <legend className="sr-only">{s.templateLead}</legend>
+                  <p className="mb-2 text-sm font-medium text-navy-700">{s.templateLead}</p>
+                  <div className="grid gap-2 sm:grid-cols-3">
+                    {TEMPLATES.map((tpl) => (
+                      <label
+                        key={tpl}
+                        className={`flex cursor-pointer flex-col gap-1.5 rounded-xl border p-4 ${
+                          template === tpl ? 'border-teal-400 bg-teal-50' : 'border-navy-100 hover:border-navy-200'
+                        }`}
+                      >
+                        <span className="flex items-center gap-2">
+                          <input
+                            type="radio"
+                            name="onboarding-template"
+                            value={tpl}
+                            checked={template === tpl}
+                            onChange={() => setTemplate(tpl as TemplateId)}
+                            className="h-4 w-4 accent-teal-600"
+                          />
+                          <span className="text-sm font-semibold text-navy-900">{s.templates[tpl].label}</span>
+                        </span>
+                        <span className="text-xs leading-relaxed text-navy-600">{s.templates[tpl].body}</span>
+                      </label>
+                    ))}
+                  </div>
+                </fieldset>
+
+                <fieldset className="mt-7">
+                  <legend className="sr-only">{s.densityTitle}</legend>
+                  <p className="mb-2 text-sm font-medium text-navy-700">{s.densityTitle}</p>
+                  <div className="grid gap-2 sm:grid-cols-3">
+                    {DENSITIES.map((d) => (
+                      <label
+                        key={d}
+                        className={`flex cursor-pointer flex-col gap-1.5 rounded-xl border p-4 ${
+                          selectedDensity === d ? 'border-teal-400 bg-teal-50' : 'border-navy-100 hover:border-navy-200'
+                        }`}
+                      >
+                        <span className="flex items-center gap-2">
+                          <input
+                            type="radio"
+                            name="onboarding-density"
+                            value={d}
+                            checked={selectedDensity === d}
+                            onChange={() => setSelectedDensity(d)}
+                            className="h-4 w-4 accent-teal-600"
+                          />
+                          <span className="text-sm font-semibold text-navy-900">{s.densities[d].label}</span>
+                        </span>
+                        <span className="text-xs leading-relaxed text-navy-600">{s.densities[d].body}</span>
+                      </label>
+                    ))}
+                  </div>
+                </fieldset>
+              </>
             )}
 
             {step === 4 && (
@@ -239,6 +270,10 @@ export function OnboardingWizard() {
                       ? s.summaryA11yNone
                       : fillTemplate(s.summaryA11yCount, { n: enabledA11y.length })}
                   </dd>
+                </div>
+                <div className="flex items-center justify-between gap-4 py-3">
+                  <dt className="text-navy-500">{s.summaryTemplate}</dt>
+                  <dd className="font-medium text-navy-900">{s.templates[template].label}</dd>
                 </div>
                 <div className="flex items-center justify-between gap-4 py-3">
                   <dt className="text-navy-500">{s.summaryDensity}</dt>

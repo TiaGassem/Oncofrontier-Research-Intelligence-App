@@ -386,3 +386,55 @@ html[data-density='advanced'] main > div {
 html[data-density='simple'] .density-secondary {
   display: none;
 }
+
+/* ─── Visual templates (chosen during onboarding, changeable later) ──────── */
+
+/* Eye comfort: larger text, warmer surfaces, looser lines — easier on long
+   reading sessions. */
+html[data-template='comfort'] body {
+  background: #faf7f2;
+  font-size: 17px;
+  line-height: 1.7;
+}
+html[data-template='comfort'] p,
+html[data-template='comfort'] li {
+  line-height: 1.9;
+}
+html[data-template='comfort'] .bg-white {
+  background-color: #fffdf9;
+}
+html[data-template='comfort'] .text-navy-600,
+html[data-template='comfort'] .text-navy-500 {
+  color: #33445c;
+}
+
+/* Creative: a brighter accent palette over the same layout and spacing.
+   Indigo keeps AA contrast against white and against the dark surfaces. */
+html[data-template='creative'] .bg-teal-600,
+html[data-template='creative'] .bg-teal-500 {
+  background-color: #4f46e5;
+}
+html[data-template='creative'] .bg-teal-50 {
+  background-color: #eef1ff;
+}
+html[data-template='creative'] .text-teal-600,
+html[data-template='creative'] .text-teal-700 {
+  color: #4338ca;
+}
+html[data-template='creative'] .text-teal-400,
+html[data-template='creative'] .text-teal-300 {
+  color: #a5b4fc;
+}
+html[data-template='creative'] .border-teal-400,
+html[data-template='creative'] .focus\:border-teal-400:focus {
+  border-color: #6366f1;
+}
+html[data-template='creative'] .bg-teal-500\/15,
+html[data-template='creative'] .hover\:bg-teal-500\/25:hover {
+  background-color: rgba(79, 70, 229, 0.15);
+}
+
+/* Scientific is the default: no overrides, the tokens as designed. */
+html[data-template='scientific'] body {
+  background: #f7f5f1;
+}

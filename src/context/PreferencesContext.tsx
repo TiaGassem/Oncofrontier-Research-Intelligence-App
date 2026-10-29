@@ -6,7 +6,7 @@ import {
 } from 'react';
 import {
   loadExperience, saveExperience, ROLE_MODULES, ROLE_START_VIEW,
-  type ExperiencePrefs, type ExperienceRole, type WorkspaceDensity,
+  type ExperiencePrefs, type ExperienceRole, type TemplateId, type WorkspaceDensity,
 } from '@/lib/experience';
 import type { ViewName } from '@/types';
 
@@ -17,6 +17,7 @@ interface PreferencesValue extends ExperiencePrefs {
   startView: ViewName;
   setRole: (role: ExperienceRole) => void;
   setDensity: (density: WorkspaceDensity) => void;
+  setTemplate: (template: TemplateId) => void;
   complete: (next: { role: ExperienceRole; density: WorkspaceDensity }) => void;
   restart: () => void;
 }
@@ -30,12 +31,13 @@ export function PreferencesProvider({ children }: { children: ReactNode }) {
     saveExperience(prefs);
   }, [prefs]);
 
-  // Density is applied as a document attribute so CSS can honour it without
-  // every module knowing about preferences.
+  // Density and visual template become document attributes so CSS can honour
+  // them without every module knowing about preferences.
   useEffect(() => {
     if (typeof document === 'undefined') return;
     document.documentElement.dataset.density = prefs.density;
-  }, [prefs.density]);
+    document.documentElement.dataset.template = prefs.template;
+  }, [prefs.density, prefs.template]);
 
   const setRole = useCallback((role: ExperienceRole) => {
     setPrefs((p) => ({ ...p, role }));
@@ -45,8 +47,13 @@ export function PreferencesProvider({ children }: { children: ReactNode }) {
     setPrefs((p) => ({ ...p, density }));
   }, []);
 
+  const setTemplate = useCallback((template: TemplateId) => {
+    setPrefs((p) => ({ ...p, template }));
+  }, []);
+
   const complete = useCallback((next: { role: ExperienceRole; density: WorkspaceDensity }) => {
-    setPrefs({ ...next, onboarded: true });
+    // Merge so a template chosen in step 4 survives finishing onboarding.
+    setPrefs((p) => ({ ...p, ...next, onboarded: true }));
   }, []);
 
   const restart = useCallback(() => {
@@ -59,9 +66,10 @@ export function PreferencesProvider({ children }: { children: ReactNode }) {
     startView: ROLE_START_VIEW[prefs.role],
     setRole,
     setDensity,
+    setTemplate,
     complete,
     restart,
-  }), [prefs, setRole, setDensity, complete, restart]);
+  }), [prefs, setRole, setDensity, setTemplate, complete, restart]);
 
   return <PreferencesContext.Provider value={value}>{children}</PreferencesContext.Provider>;
 }
