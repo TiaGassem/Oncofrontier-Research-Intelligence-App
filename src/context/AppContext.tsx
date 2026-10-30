@@ -4,16 +4,16 @@ import { hasStoredExperience } from '@/lib/experience';
 
 const LANGUAGE_KEY = 'oncofrontier-language';
 
-// Languages with a complete interface translation. Regional variants (ar-TN,
-// fr-CA, …) fall back to their parent language; anything else falls back to
-// English for menus while the chat and voice features still honor the pick.
-const TRANSLATED_LANGUAGES = ['en', 'fr', 'ar'];
-
+// Every language the picker offers has at least its navigation, actions,
+// loading and accessibility strings translated (see coreTranslations, merged
+// over English by getTranslation). Regional variants use their parent
+// language, because "ar-TN" has no dictionary of its own. Resolving anything
+// else down to English used to throw that work away: the picker stored the
+// code, but the whole interface stayed English.
 function resolveInterfaceLanguage(code: Language): Language {
-  if ((TRANSLATED_LANGUAGES as string[]).includes(code)) return code;
-  if (code.startsWith('ar')) return 'ar';
-  if (code.startsWith('fr')) return 'fr';
-  return 'en';
+  if (code.startsWith('ar-')) return 'ar';
+  if (code.startsWith('fr-')) return 'fr';
+  return code;
 }
 
 const RTL_LANGUAGES = ['ar', 'ur', 'fa', 'he'];

@@ -394,6 +394,9 @@ export interface Translation {
     limitedVoice: string;
   };
   sidebar: {
+    home: string;
+    allModules: string;
+    changeExperience: string;
     openMenu: string;
     closeMenu: string;
     signIn: string;
@@ -897,6 +900,9 @@ export const translations: Record<'en' | 'fr' | 'ar', Translation> = {
       limitedVoice: 'Voice input/output is limited for this language on most devices.',
     },
     sidebar: {
+      home: 'Home',
+      allModules: 'All modules',
+      changeExperience: 'Change experience',
       openMenu: 'Open navigation menu',
       closeMenu: 'Close navigation menu',
       signIn: 'Sign in / Create account',
@@ -1413,6 +1419,9 @@ export const translations: Record<'en' | 'fr' | 'ar', Translation> = {
       limitedVoice: 'La saisie/sortie vocale est limitée pour cette langue sur la plupart des appareils.',
     },
     sidebar: {
+      home: 'Accueil',
+      allModules: 'Tous les modules',
+      changeExperience: 'Changer d’expérience',
       openMenu: 'Ouvrir le menu de navigation',
       closeMenu: 'Fermer le menu de navigation',
       signIn: 'Se connecter / Créer un compte',
@@ -1918,6 +1927,9 @@ export const translations: Record<'en' | 'fr' | 'ar', Translation> = {
       limitedVoice: 'الإدخال/الإخراج الصوتي محدود لهذه اللغة على معظم الأجهزة.',
     },
     sidebar: {
+      home: 'الرئيسية',
+      allModules: 'كل الوحدات',
+      changeExperience: 'تغيير التجربة',
       openMenu: 'فتح قائمة التنقل',
       closeMenu: 'إغلاق قائمة التنقل',
       signIn: 'تسجيل الدخول / إنشاء حساب',

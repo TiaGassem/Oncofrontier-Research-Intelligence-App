@@ -56,6 +56,9 @@ export const coreTranslations: Partial<Record<Language, CorePartial>> = {
       retry: 'Reintentar', emptyTitle: 'Nada aquí todavía', emptyMessage: 'Los resultados de búsqueda aparecerán aquí.',
     },
     sidebar: {
+      home: "Inicio",
+      allModules: "Todos los módulos",
+      changeExperience: "Cambiar experiencia",
       openMenu: 'Abrir menú de navegación', closeMenu: 'Cerrar menú de navegación',
       signIn: 'Iniciar sesión / Crear cuenta', signOut: 'Cerrar sesión', disclaimer: 'Aviso legal',
     },
@@ -105,6 +108,9 @@ export const coreTranslations: Partial<Record<Language, CorePartial>> = {
       retry: 'Erneut versuchen', emptyTitle: 'Noch nichts hier', emptyMessage: 'Suchergebnisse erscheinen hier.',
     },
     sidebar: {
+      home: "Startseite",
+      allModules: "Alle Module",
+      changeExperience: "Erfahrung wechseln",
       openMenu: 'Navigationsmenü öffnen', closeMenu: 'Navigationsmenü schließen',
       signIn: 'Anmelden / Konto erstellen', signOut: 'Abmelden', disclaimer: 'Haftungsausschluss',
     },
@@ -154,6 +160,9 @@ export const coreTranslations: Partial<Record<Language, CorePartial>> = {
       retry: 'Tentar novamente', emptyTitle: 'Nada aqui ainda', emptyMessage: 'Os resultados da pesquisa aparecerão aqui.',
     },
     sidebar: {
+      home: "Início",
+      allModules: "Todos os módulos",
+      changeExperience: "Mudar de experiência",
       openMenu: 'Abrir menu de navegação', closeMenu: 'Fechar menu de navegação',
       signIn: 'Entrar / Criar conta', signOut: 'Sair', disclaimer: 'Aviso legal',
     },
@@ -203,6 +212,9 @@ export const coreTranslations: Partial<Record<Language, CorePartial>> = {
       retry: 'Riprova', emptyTitle: 'Ancora niente qui', emptyMessage: 'I risultati della ricerca appariranno qui.',
     },
     sidebar: {
+      home: "Home",
+      allModules: "Tutti i moduli",
+      changeExperience: "Cambia esperienza",
       openMenu: 'Apri menu di navigazione', closeMenu: 'Chiudi menu di navigazione',
       signIn: 'Accedi / Crea account', signOut: 'Esci', disclaimer: 'Dichiarazione',
     },
@@ -252,6 +264,9 @@ export const coreTranslations: Partial<Record<Language, CorePartial>> = {
       retry: 'Tekrar dene', emptyTitle: 'Burada henüz bir şey yok', emptyMessage: 'Arama sonuçları burada görünecek.',
     },
     sidebar: {
+      home: "Ana sayfa",
+      allModules: "Tüm modüller",
+      changeExperience: "Deneyimi değiştir",
       openMenu: 'Gezinme menüsünü aç', closeMenu: 'Gezinme menüsünü kapat',
       signIn: 'Oturum aç / Hesap oluştur', signOut: 'Oturumu kapat', disclaimer: 'Yasal uyarı',
     },
@@ -301,6 +316,9 @@ export const coreTranslations: Partial<Record<Language, CorePartial>> = {
       retry: '重试', emptyTitle: '这里还没有内容', emptyMessage: '搜索结果将显示在这里。',
     },
     sidebar: {
+      home: "首页",
+      allModules: "所有模块",
+      changeExperience: "切换体验",
       openMenu: '打开导航菜单', closeMenu: '关闭导航菜单',
       signIn: '登录 / 创建账户', signOut: '退出登录', disclaimer: '免责声明',
     },
@@ -350,6 +368,9 @@ export const coreTranslations: Partial<Record<Language, CorePartial>> = {
       retry: '再試行', emptyTitle: 'まだ何もありません', emptyMessage: '検索結果がここに表示されます。',
     },
     sidebar: {
+      home: "ホーム",
+      allModules: "すべてのモジュール",
+      changeExperience: "体験を変更",
       openMenu: 'ナビゲーションメニューを開く', closeMenu: 'ナビゲーションメニューを閉じる',
       signIn: 'サインイン / アカウント作成', signOut: 'サインアウト', disclaimer: '免責事項',
     },
@@ -399,6 +420,9 @@ export const coreTranslations: Partial<Record<Language, CorePartial>> = {
       retry: '다시 시도', emptyTitle: '아직 여기에 없습니다', emptyMessage: '검색 결과가 여기에 표시됩니다.',
     },
     sidebar: {
+      home: "홈",
+      allModules: "모든 모듈",
+      changeExperience: "환경 변경",
       openMenu: '탐색 메뉴 열기', closeMenu: '탐색 메뉴 닫기',
       signIn: '로그인 / 계정 만들기', signOut: '로그아웃', disclaimer: '면책 조항',
     },
@@ -448,6 +472,9 @@ export const coreTranslations: Partial<Record<Language, CorePartial>> = {
       retry: 'पुनः प्रयास करें', emptyTitle: 'यहाँ अभी कुछ नहीं', emptyMessage: 'खोज परिणाम यहाँ दिखाई देंगे।',
     },
     sidebar: {
+      home: "होम",
+      allModules: "सभी मॉड्यूल",
+      changeExperience: "अनुभव बदलें",
       openMenu: 'नेविगेशन मेनू खोलें', closeMenu: 'नेविगेशन मेनू बंद करें',
       signIn: 'साइन इन / खाता बनाएँ', signOut: 'साइन आउट', disclaimer: 'अस्वीकरण',
     },
@@ -497,6 +524,9 @@ export const coreTranslations: Partial<Record<Language, CorePartial>> = {
       retry: 'دوبارہ کوشش کریں', emptyTitle: 'یہاں ابھی کچھ نہیں', emptyMessage: 'تلاش کے نتائج یہاں دکھائی دیں گے۔',
     },
     sidebar: {
+      home: "ہوم",
+      allModules: "تمام ماڈیولز",
+      changeExperience: "تجربہ بدلیں",
       openMenu: 'نیویگیشن مینو کھولیں', closeMenu: 'نیویگیشن مینو بند کریں',
       signIn: 'سائن ان / اکاؤنٹ بنائیں', signOut: 'سائن آؤٹ', disclaimer: 'ڈس کلیمر',
     },
@@ -546,6 +576,9 @@ export const coreTranslations: Partial<Record<Language, CorePartial>> = {
       retry: 'تلاش دوباره', emptyTitle: 'هنوز چیزی اینجا نیست', emptyMessage: 'نتایج جستجو اینجا نمایش داده می‌شوند.',
     },
     sidebar: {
+      home: "خانه",
+      allModules: "همه ماژول‌ها",
+      changeExperience: "تغییر تجربه",
       openMenu: 'باز کردن منوی ناوبری', closeMenu: 'بستن منوی ناوبری',
       signIn: 'ورود / ایجاد حساب', signOut: 'خروج', disclaimer: 'سلب مسئولیت',
     },
@@ -595,6 +628,9 @@ export const coreTranslations: Partial<Record<Language, CorePartial>> = {
       retry: 'আবার চেষ্টা করুন', emptyTitle: 'এখানে এখনও কিছু নেই', emptyMessage: 'অনুসন্ধানের ফলাফল এখানে দেখা যাবে।',
     },
     sidebar: {
+      home: "হোম",
+      allModules: "সব মডিউল",
+      changeExperience: "অভিজ্ঞতা পরিবর্তন",
       openMenu: 'নেভিগেশন মেনু খুলুন', closeMenu: 'নেভিগেশন মেনু বন্ধ করুন',
       signIn: 'সাইন ইন / অ্যাকাউন্ট তৈরি করুন', signOut: 'সাইন আউট', disclaimer: 'দাবিত্যাগ',
     },
@@ -644,6 +680,9 @@ export const coreTranslations: Partial<Record<Language, CorePartial>> = {
       retry: 'Coba lagi', emptyTitle: 'Belum ada apa pun di sini', emptyMessage: 'Hasil pencarian akan muncul di sini.',
     },
     sidebar: {
+      home: "Beranda",
+      allModules: "Semua modul",
+      changeExperience: "Ubah pengalaman",
       openMenu: 'Buka menu navigasi', closeMenu: 'Tutup menu navigasi',
       signIn: 'Masuk / Buat akun', signOut: 'Keluar', disclaimer: 'Penafian',
     },
@@ -693,6 +732,9 @@ export const coreTranslations: Partial<Record<Language, CorePartial>> = {
       retry: 'Thử lại', emptyTitle: 'Chưa có gì ở đây', emptyMessage: 'Kết quả tìm kiếm sẽ hiển thị ở đây.',
     },
     sidebar: {
+      home: "Trang chủ",
+      allModules: "Tất cả mô-đun",
+      changeExperience: "Đổi trải nghiệm",
       openMenu: 'Mở menu điều hướng', closeMenu: 'Đóng menu điều hướng',
       signIn: 'Đăng nhập / Tạo tài khoản', signOut: 'Đăng xuất', disclaimer: 'Tuyên bố miễn trừ',
     },
@@ -742,6 +784,9 @@ export const coreTranslations: Partial<Record<Language, CorePartial>> = {
       retry: 'ลองอีกครั้ง', emptyTitle: 'ยังไม่มีอะไรที่นี่', emptyMessage: 'ผลการค้นหาจะปรากฏที่นี่',
     },
     sidebar: {
+      home: "หน้าแรก",
+      allModules: "โมดูลทั้งหมด",
+      changeExperience: "เปลี่ยนประสบการณ์",
       openMenu: 'เปิดเมนูนำทาง', closeMenu: 'ปิดเมนูนำทาง',
       signIn: 'เข้าสู่ระบบ / สร้างบัญชี', signOut: 'ออกจากระบบ', disclaimer: 'ข้อปฏิเสธความรับผิด',
     },
@@ -791,6 +836,9 @@ export const coreTranslations: Partial<Record<Language, CorePartial>> = {
       retry: 'Jaribu tena', emptyTitle: 'Hakuna kitu hapa bado', emptyMessage: 'Matokeo ya utafutaji yataonekana hapa.',
     },
     sidebar: {
+      home: "Mwanzo",
+      allModules: "Moduli zote",
+      changeExperience: "Badilisha uzoefu",
       openMenu: 'Fungua menyu ya urambazaji', closeMenu: 'Funga menyu ya urambazaji',
       signIn: 'Ingia / Fungua akaunti', signOut: 'Toka', disclaimer: 'Kanusho',
     },

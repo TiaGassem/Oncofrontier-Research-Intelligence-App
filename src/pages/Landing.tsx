@@ -20,8 +20,9 @@ export function Landing() {
   const { onboarded, startView } = usePreferences();
   const s = getSurfaceStrings(language).landing;
   const o = getSurfaceStrings(language).onboarding;
-  // Some languages only drive chat, retrieval and speech; their interface text
-  // is still English. Say so, instead of letting the pick look broken.
+  // Below the fully translated languages, menus and controls are translated
+  // but the long-form research copy is not. Say which part is in English
+  // instead of letting the pick look broken.
   const partialChoice = LANGUAGE_CHOICES.find(
     (choice) => choice.code === userLanguage && !choice.complete
   );
@@ -111,8 +112,10 @@ export function Landing() {
 
       {partialChoice && (
         <p className="border-b border-amber-200 bg-amber-50 px-4 py-2 text-center text-xs text-navy-700" role="status">
-          Interface text stays in English for now — chat, research search and voice use{' '}
-          <strong>{partialChoice.native}</strong>.
+          Menus, buttons and messages are in <strong>{partialChoice.native}</strong>. Longer
+          research explanations and the legal pages are still in English — chat, search and
+          voice use{' '}
+          <strong>{partialChoice.native}</strong> throughout.
         </p>
       )}
 

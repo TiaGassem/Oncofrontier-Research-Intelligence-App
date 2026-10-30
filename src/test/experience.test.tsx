@@ -10,6 +10,7 @@ import {
   LANGUAGE_CHOICES, ROLE_MODULES,
 } from '@/lib/experience';
 import { getSurfaceStrings } from '@/lib/onboardingTranslations';
+import { getTranslation } from '@/lib/i18n';
 import type { ViewName } from '@/types';
 
 beforeEach(() => {
@@ -19,6 +20,19 @@ beforeEach(() => {
 function ViewProbe() {
   const { currentView } = useApp();
   return <span data-testid="view">{currentView}</span>;
+}
+
+function LanguageProbe() {
+  const { language, userLanguage, direction, setLanguage } = useApp();
+  return (
+    <div>
+      <span data-testid="language">{language}</span>
+      <span data-testid="user-language">{userLanguage}</span>
+      <span data-testid="direction">{direction}</span>
+      <button type="button" onClick={() => setLanguage('zh')}>pick-zh</button>
+      <button type="button" onClick={() => setLanguage('ar-TN')}>pick-ar-tn</button>
+    </div>
+  );
 }
 
 function renderWizard() {
@@ -86,6 +100,31 @@ describe('surface translations', () => {
     expect(partial).not.toContain('en');
     expect(partial).not.toContain('fr');
     expect(partial).not.toContain('ar');
+  });
+});
+
+describe('interface language resolution', () => {
+  const renderLanguageProbe = () => render(
+    <AppProvider>
+      <LanguageProbe />
+    </AppProvider>
+  );
+
+  it('keeps a language that has its own translated strings', () => {
+    renderLanguageProbe();
+    fireEvent.click(screen.getByText('pick-zh'));
+    // Collapsing this to 'en' was the bug: the picker stored 'zh' but the whole
+    // interface kept rendering English.
+    expect(screen.getByTestId('language').textContent).toBe('zh');
+    expect(getTranslation('zh').nav.dashboard).toBe('仪表板');
+  });
+
+  it('maps a regional variant onto the language it is written in', () => {
+    renderLanguageProbe();
+    fireEvent.click(screen.getByText('pick-ar-tn'));
+    expect(screen.getByTestId('user-language').textContent).toBe('ar-TN');
+    expect(screen.getByTestId('language').textContent).toBe('ar');
+    expect(screen.getByTestId('direction').textContent).toBe('rtl');
   });
 });
 
