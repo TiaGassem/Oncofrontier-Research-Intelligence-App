@@ -179,6 +179,17 @@ body {
   background: #10161f;
   color: #dbe4ee;
 }
+/* The public homepage paints a light gradient that would otherwise sit on top
+   of the dark background and make night mode look broken there. */
+.a11y-night .landing-shell {
+  background-image: none;
+  background-color: #10161f;
+}
+.a11y-night .landing-shell header,
+.a11y-night .landing-shell footer {
+  background-color: #1b2530;
+  border-color: #26313d;
+}
 .a11y-night .bg-navy-50,
 .a11y-night .bg-navy-50\/30 {
   background-color: #161e29;

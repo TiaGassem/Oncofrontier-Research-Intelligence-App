@@ -16,18 +16,46 @@ import type { Language } from '@/types';
  * short lead → two pill CTAs → a numbered four-step row.
  */
 export function Landing() {
-  const { language, setLanguage, setCurrentView } = useApp();
+  const { language, userLanguage, setLanguage, setCurrentView } = useApp();
   const { onboarded, startView } = usePreferences();
   const s = getSurfaceStrings(language).landing;
   const o = getSurfaceStrings(language).onboarding;
+  // Some languages only drive chat, retrieval and speech; their interface text
+  // is still English. Say so, instead of letting the pick look broken.
+  const partialChoice = LANGUAGE_CHOICES.find(
+    (choice) => choice.code === userLanguage && !choice.complete
+  );
 
   const capabilityIcons = [Search, Dna, BookOpen, Heart];
   const start = () => setCurrentView(onboarded ? startView : 'welcome');
 
+  // In-page navigation must NOT write to location.hash: the app is hash-routed,
+  // so a plain "#how" anchor is read as an unknown view and throws the visitor
+  // into the dashboard. Scroll explicitly instead.
+  const scrollToSection = (id: string) => () => {
+    const target = document.getElementById(id);
+    if (!target) return;
+    const reduce = typeof window !== 'undefined' && typeof window.matchMedia === 'function'
+      ? window.matchMedia('(prefers-reduced-motion: reduce)').matches
+      : false;
+    if (typeof target.scrollIntoView === 'function') {
+      target.scrollIntoView({ behavior: reduce ? 'auto' : 'smooth', block: 'start' });
+    }
+    target.setAttribute('tabindex', '-1');
+    target.focus({ preventScroll: true });
+  };
+
   return (
-    <div className="min-h-screen bg-gradient-to-b from-white via-white to-teal-50/40 text-navy-900">
+    <div className="landing-shell min-h-screen bg-gradient-to-b from-white via-white to-teal-50/40 text-navy-900">
       <a
         href="#landing-main"
+        onClick={(e) => {
+          e.preventDefault();
+          const main = document.getElementById('landing-main');
+          if (!main) return;
+          main.setAttribute('tabindex', '-1');
+          main.focus();
+        }}
         className="sr-only focus:not-sr-only focus:fixed focus:start-3 focus:top-3 focus:z-50 focus:rounded-lg focus:bg-white focus:px-4 focus:py-3 focus:text-navy-900 focus:shadow-lg"
       >
         {o.home}
@@ -41,9 +69,15 @@ export function Landing() {
           </button>
 
           <nav className="ms-auto hidden items-center gap-6 text-sm text-navy-600 md:flex" aria-label={s.navAbout}>
-            <a href="#capabilities" className="hover:text-navy-900">{s.capabilitiesTitle}</a>
-            <a href="#how" className="hover:text-navy-900">{s.navHowItWorks}</a>
-            <a href="#accessibility" className="hover:text-navy-900">{s.navAccessibility}</a>
+            <button type="button" onClick={scrollToSection('capabilities')} className="hover:text-navy-900">
+              {s.capabilitiesTitle}
+            </button>
+            <button type="button" onClick={scrollToSection('how')} className="hover:text-navy-900">
+              {s.navHowItWorks}
+            </button>
+            <button type="button" onClick={scrollToSection('accessibility')} className="hover:text-navy-900">
+              {s.navAccessibility}
+            </button>
           </nav>
 
           <div className="ms-auto flex items-center gap-2 md:ms-0">
@@ -75,6 +109,13 @@ export function Landing() {
         </div>
       </header>
 
+      {partialChoice && (
+        <p className="border-b border-amber-200 bg-amber-50 px-4 py-2 text-center text-xs text-navy-700" role="status">
+          Interface text stays in English for now — chat, research search and voice use{' '}
+          <strong>{partialChoice.native}</strong>.
+        </p>
+      )}
+
       <main id="landing-main">
         {/* Hero — pill badge, two-tone headline, two pill CTAs */}
         <section className="mx-auto max-w-6xl px-4 pt-14 pb-16 text-center md:px-8 md:pt-24 md:pb-24">
@@ -100,19 +141,20 @@ export function Landing() {
               {s.ctaStart}
               <ArrowRight className="h-4 w-4" aria-hidden="true" />
             </button>
-            <a
-              href="#how"
+            <button
+              type="button"
+              onClick={scrollToSection('how')}
               className="inline-flex items-center gap-2 rounded-full border border-navy-300 bg-white px-7 py-3 text-sm font-semibold text-navy-800 hover:border-navy-400"
             >
               {s.ctaLearn}
-            </a>
+            </button>
           </div>
 
           <p className="mt-5 text-xs text-navy-500">{s.trustNote}</p>
         </section>
 
         {/* Four numbered steps */}
-        <section id="how" className="border-t border-navy-100 bg-white py-16 md:py-20">
+        <section id="how" className="scroll-mt-24 border-t border-navy-100 bg-white py-16 md:py-20">
           <div className="mx-auto max-w-6xl px-4 md:px-8">
             <div className="text-center">
               <h2 className="text-2xl font-bold text-navy-900 md:text-3xl">{s.stepsTitle}</h2>
@@ -132,7 +174,7 @@ export function Landing() {
         </section>
 
         {/* Capabilities */}
-        <section id="capabilities" className="bg-white pb-16 md:pb-20">
+        <section id="capabilities" className="scroll-mt-24 bg-white pb-16 md:pb-20">
           <div className="mx-auto max-w-6xl px-4 md:px-8">
             <h2 className="text-2xl font-bold text-navy-900 md:text-3xl">{s.capabilitiesTitle}</h2>
             <p className="mt-2 max-w-xl text-sm text-navy-600">{s.capabilitiesLead}</p>
@@ -171,7 +213,7 @@ export function Landing() {
         </section>
 
         {/* Accessibility commitment */}
-        <section id="accessibility" className="py-16 md:py-20">
+        <section id="accessibility" className="scroll-mt-24 py-16 md:py-20">
           <div className="mx-auto max-w-3xl px-4 text-center md:px-8">
             <h2 className="text-2xl font-bold text-navy-900 md:text-3xl">{s.accessTitle}</h2>
             <p className="mt-4 text-sm leading-relaxed text-navy-600">{s.accessBody}</p>

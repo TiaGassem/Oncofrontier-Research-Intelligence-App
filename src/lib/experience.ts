@@ -79,7 +79,7 @@ export const LANGUAGE_CHOICES: LanguageChoice[] = [
   { code: 'en', label: 'English', native: 'English', complete: true },
   { code: 'fr', label: 'French', native: 'Français', complete: true },
   { code: 'ar', label: 'Arabic', native: 'العربية', complete: true },
-  { code: 'ar', label: 'Tunisian Arabic', native: 'تونسي', complete: true },
+  { code: 'ar-TN', label: 'Tunisian Arabic', native: 'تونسي', complete: true },
   { code: 'es', label: 'Spanish', native: 'Español', complete: false },
   { code: 'de', label: 'German', native: 'Deutsch', complete: false },
   { code: 'pt', label: 'Portuguese', native: 'Português', complete: false },

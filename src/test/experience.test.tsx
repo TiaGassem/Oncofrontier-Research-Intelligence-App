@@ -105,7 +105,59 @@ describe('public landing page', () => {
     expect(heading.textContent).toContain(s.heroLine1);
     expect(heading.textContent).toContain(s.heroLine2);
     expect(screen.getAllByRole('button', { name: s.ctaStart }).length).toBeGreaterThan(0);
-    expect(screen.getByRole('link', { name: s.ctaLearn })).toBeTruthy();
+    expect(screen.getByRole('button', { name: s.ctaLearn })).toBeTruthy();
+  });
+
+  it('keeps the visitor on the homepage when an in-page nav item is used', () => {
+    render(
+      <AppProvider>
+        <A11yProvider>
+          <PreferencesProvider>
+            <Landing />
+            <ViewProbe />
+          </PreferencesProvider>
+        </A11yProvider>
+      </AppProvider>
+    );
+    const s = getSurfaceStrings('en').landing;
+    // A hash anchor here would be parsed as a route and jump to the dashboard.
+    for (const name of [s.capabilitiesTitle, s.navHowItWorks, s.navAccessibility]) {
+      fireEvent.click(screen.getByRole('button', { name }));
+      expect(screen.getByTestId('view').textContent).toBe('home');
+    }
+    expect(window.location.hash).not.toMatch(/capabilities|#how|accessibility/);
+  });
+
+  it('switches the interface language and marks languages without a translation', () => {
+    render(
+      <AppProvider>
+        <A11yProvider>
+          <PreferencesProvider>
+            <Landing />
+          </PreferencesProvider>
+        </A11yProvider>
+      </AppProvider>
+    );
+    const select = screen.getByRole('combobox');
+
+    fireEvent.change(select, { target: { value: 'fr' } });
+    expect(screen.getByRole('heading', { level: 1 }).textContent).toContain(
+      getSurfaceStrings('fr').landing.heroLine1
+    );
+    expect(screen.queryByRole('status')).toBeNull();
+
+    fireEvent.change(select, { target: { value: 'es' } });
+    expect(screen.getByRole('heading', { level: 1 }).textContent).toContain(
+      getSurfaceStrings('en').landing.heroLine1
+    );
+    // Español only drives chat, search and voice — say so instead of silently ignoring it.
+    expect(screen.getByRole('status').textContent).toContain('Español');
+  });
+
+  it('gives every language option a distinct value', () => {
+    const codes = LANGUAGE_CHOICES.map((c) => c.code);
+    expect(new Set(codes).size).toBe(codes.length);
+    expect(codes).toContain('ar-TN');
   });
 
   it('exposes the appearance modes switcher', () => {
@@ -118,7 +170,10 @@ describe('public landing page', () => {
         </A11yProvider>
       </AppProvider>
     );
-    expect(screen.getByRole('button', { name: /Appearance/i })).toBeTruthy();
+    fireEvent.click(screen.getByRole('button', { name: /Appearance/i }));
+    // The menu must actually change the document, not just open.
+    fireEvent.click(screen.getByRole('checkbox', { name: /Night mode/i }));
+    expect(document.documentElement.classList.contains('a11y-night')).toBe(true);
   });
 });
 

@@ -160,7 +160,7 @@ export type ViewName =
   | 'contact';
 
 export type Language =
-  | 'en' | 'fr' | 'ar'
+  | 'en' | 'fr' | 'ar' | 'ar-TN'
   | 'es' | 'de' | 'pt' | 'it' | 'tr'
   | 'zh' | 'ja' | 'ko' | 'hi' | 'ur' | 'fa' | 'bn'
   | 'id' | 'vi' | 'th' | 'sw';

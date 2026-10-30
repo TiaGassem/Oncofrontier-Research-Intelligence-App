@@ -54,8 +54,11 @@ function viewFromHash(): ViewName {
   const h = window.location.hash.replace(/^#\/?/, '');
   // First visit with no hash and no saved preferences opens the public site,
   // not the research dashboard.
-  if (!h) return hasStoredExperience() ? 'dashboard' : 'home';
-  return (VALID_VIEWS as string[]).includes(h) ? (h as ViewName) : 'dashboard';
+  const fallback: ViewName = hasStoredExperience() ? 'dashboard' : 'home';
+  if (!h) return fallback;
+  // An unknown hash (a plain in-page anchor, a stale link) must never yank the
+  // visitor to another page; keep the default view for that situation.
+  return (VALID_VIEWS as string[]).includes(h) ? (h as ViewName) : fallback;
 }
 
 export function AppProvider({ children }: { children: ReactNode }) {
