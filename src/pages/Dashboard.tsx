@@ -32,7 +32,6 @@ const MODULES = [
   {
     id: 'discovery' as ViewName,
     titleKey: 'discovery' as const,
-    subtitle: 'Cancer Drug Discovery',
     descEn: 'Evidence-backed target assessment from Open Targets, compound lookup from PubChem, resistance context, translational validation planning, and research brief export.',
     descFr: 'Évaluation des cibles basée sur des preuves depuis Open Targets, recherche de composés depuis PubChem, contexte de résistance, planification de validation translationnelle, et export de brief.',
     descAr: 'تقييم الأهداف المدعوم بالأدلة من Open Targets، البحث عن المركبات من PubChem، سياق المقاومة، تخطيط التحقق الانتقالي، وتصدير الملخص.',
@@ -43,7 +42,6 @@ const MODULES = [
   {
     id: 'curemap' as ViewName,
     titleKey: 'curemap' as const,
-    subtitle: 'Evidence Explorer',
     descEn: 'Search cancer types, genes, drugs, and research questions across published literature. Retrieve real publications with source-supported findings, study context, and uncertainty.',
     descFr: 'Recherchez types de cancer, gènes, médicaments et questions de recherche dans la littérature publiée. Récupérez de vraies publications avec résultats, contexte d\'étude et incertitude.',
     descAr: 'ابحث عن أنواع السرطان، الجينات، الأدوية، وأسئلة البحث في المنشورات المنشورة. استرد منشورات حقيقية مع نتائج مدعومة بالمصدر وسياق الدراسة وعدم اليقين.',
@@ -54,7 +52,6 @@ const MODULES = [
   {
     id: 'resistance' as ViewName,
     titleKey: 'resistance' as const,
-    subtitle: 'Treatment Resistance',
     descEn: 'Explore reported treatment-resistance mechanisms by cancer type, therapy, target, and gene. Every finding links to its supporting publication with PMID/DOI.',
     descFr: 'Explorez les mécanismes de résistance aux traitements par type de cancer, thérapie, cible et gène. Chaque résultat renvoie à sa publication avec PMID/DOI.',
     descAr: 'استكشف آليات مقاومة العلاج المبلغ عنها حسب نوع السرطان والعلاج والهدف والجين. كل نتيجة مرتبطة بمنشورها الداعم بـ PMID/DOI.',
@@ -65,7 +62,6 @@ const MODULES = [
   {
     id: 'equity' as ViewName,
     titleKey: 'equity' as const,
-    subtitle: 'Research Gaps',
     descEn: 'Explore publication activity and registered trial activity by cancer type. See where research is concentrated and where gaps may exist. No fabricated statistics.',
     descFr: 'Explorez l\'activité de publication et d\'essais cliniques par type de cancer. Voyez où la recherche se concentre et où des lacunes peuvent exister. Aucune statistique fabriquée.',
     descAr: 'استكشف نشاط المنشورات والتجارب المسجلة حسب نوع السرطان. تعرف على تركيز البحث وأين قد توجد فجوات. لا إحصائيات ملفقة.',
@@ -76,7 +72,6 @@ const MODULES = [
   {
     id: 'burden' as ViewName,
     titleKey: 'burden' as const,
-    subtitle: 'Global Burden Atlas',
     descEn: 'Real-world cancer statistics from GLOBOCAN 2022 (IARC/WHO). Compare incidence, mortality, and 5-year prevalence across all six WHO regions and 185 countries.',
     descFr: 'Statistiques réelles sur le cancer depuis GLOBOCAN 2022 (CIRC/OMS). Comparez l\'incidence, la mortalité et la prévalence à 5 ans dans les six régions OMS et 185 pays.',
     descAr: 'إحصائيات حقيقية للسرطان من GLOBOCAN 2022 (IARC/WHO). قارن الإصابة والوفيات والانتشار عبر جميع مناطق الصحة العالمية الست و185 دولة.',
@@ -87,7 +82,6 @@ const MODULES = [
   {
     id: 'biomarkers' as ViewName,
     titleKey: 'biomarkers' as const,
-    subtitle: 'Biomarker Atlas',
     descEn: 'Clinically validated biomarkers — EGFR, KRAS, BRAF, HER2, BRCA1/2, PD-L1, ALK, MSI/MMR and more — with testing methods, assay types, therapeutic relevance, and prevalence by population.',
     descFr: 'Biomarqueurs validés cliniquement — EGFR, KRAS, BRAF, HER2, BRCA1/2, PD-L1, ALK, MSI/MMR et plus — avec méthodes de test, types d\'analyse, pertinence thérapeutique et prévalence.',
     descAr: 'واسمات حيوية مثبتة سريرياً — EGFR، KRAS، BRAF، HER2، BRCA1/2، PD-L1، ALK، MSI/MMR والمزيد — مع طرق الاختبار وأنواع التحليل والصلة العلاجية والانتشار.',
@@ -98,7 +92,6 @@ const MODULES = [
   {
     id: 'anatomy' as ViewName,
     titleKey: 'anatomy' as const,
-    subtitle: 'Cancer Anatomy',
     descEn: 'Explore the human body by organ system — 10 body systems, 20+ organs. Common cancers, anatomy, function, risk factors, early warning signs, and WHO regional patterns.',
     descFr: 'Explorez le corps humain par système organique — 10 systèmes, 20+ organes. Cancers courants, anatomie, fonction, facteurs de risque, signes d\'alerte et schémas régionaux OMS.',
     descAr: 'استكشف جسم الإنسان حسب الأجهزة العضوية — 10 أجهزة، أكثر من 20 عضواً. السرطانات الشائعة والتشريح والوظيفة وعوامل الخطر وعلامات الإنذار والأنماط الإقليمية لمنظمة الصحة العالمية.',
@@ -109,7 +102,6 @@ const MODULES = [
   {
     id: 'companion' as ViewName,
     titleKey: 'companion' as const,
-    subtitle: 'For Patients & Families',
     descEn: 'Understand cancer in plain language — what it is, survival statistics explained honestly, cancer plus other conditions, practical guidance, and a dedicated patient chatbot.',
     descFr: "Comprendre le cancer en termes simples — ce que c'est, statistiques de survie expliquées honnêtement, cancer et autres maladies, conseils pratiques, et un chatbot dédié aux patients.",
     descAr: 'افهم السرطان بلغة بسيطة — ما هو، إحصائيات البقاء مشروحة بأمانة، السرطان وأمراض أخرى، إرشادات عملية، ودردشة مخصصة للمرضى.',
@@ -213,7 +205,9 @@ export function Dashboard({ onNavigate }: DashboardProps) {
                 <Icon className="w-6 h-6" />
               </div>
               <h3 className="font-bold text-navy-900 text-base mb-0.5">{t.nav[mod.titleKey]}</h3>
-              <p className="text-xs text-navy-400 font-medium mb-2">{mod.subtitle}</p>
+              <p className="text-xs text-navy-400 font-medium mb-2">
+                {t.moduleCards[mod.id as keyof typeof t.moduleCards]}
+              </p>
               <p className="text-sm text-navy-600 leading-relaxed mb-3">{mod[descKey]}</p>
               <div className="flex items-center justify-between">
                 <span className="text-xs text-navy-400">{mod.stat}</span>

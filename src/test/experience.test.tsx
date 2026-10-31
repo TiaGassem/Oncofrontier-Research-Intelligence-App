@@ -4,6 +4,7 @@ import { AppProvider, useApp } from '@/context/AppContext';
 import { A11yProvider } from '@/context/A11yContext';
 import { PreferencesProvider } from '@/context/PreferencesContext';
 import { Landing } from '@/pages/Landing';
+import { Dashboard } from '@/pages/Dashboard';
 import { OnboardingWizard } from '@/components/OnboardingWizard';
 import {
   loadExperience, orderModulesForRole, EXPERIENCE_STORAGE_KEY,
@@ -263,5 +264,41 @@ describe('onboarding wizard', () => {
     fireEvent.click(screen.getByRole('button', { name: /Continue/ }));
     fireEvent.click(screen.getByRole('checkbox', { name: /Larger text/ }));
     expect(document.documentElement.classList.contains('a11y-large-text')).toBe(true);
+  });
+});
+
+describe('localized interface chrome', () => {
+  it('translates the sidebar footer links in every interface language', () => {
+    const pairs: Array<[string, string[]]> = [
+      ['fr', ['Confidentialité', 'Conditions', 'Contact']],
+      ['ar', ['الخصوصية', 'الشروط', 'اتصل بنا']],
+      ['es', ['Privacidad', 'Términos', 'Contacto']],
+      ['zh', ['隐私', '条款', '联系']],
+      ['sw', ['Faragha', 'Masharti', 'Mawasiliano']],
+    ];
+    for (const [lang, expected] of pairs) {
+      const { sidebar } = getTranslation(lang as Parameters<typeof getTranslation>[0]);
+      expect([sidebar.privacy, sidebar.terms, sidebar.contact]).toEqual(expected);
+    }
+  });
+
+  it('renders dashboard module labels in the picked language', () => {
+    const cases: Array<[string, string]> = [
+      ['fr', 'Découverte de médicaments'],
+      ['ar', 'اكتشاف أدوية السرطان'],
+    ];
+    for (const [lang, label] of cases) {
+      localStorage.setItem('oncofrontier-language', lang);
+      const { unmount } = render(
+        <AppProvider>
+          <PreferencesProvider>
+            <Dashboard onNavigate={() => {}} />
+          </PreferencesProvider>
+        </AppProvider>
+      );
+      expect(screen.getByText(label)).toBeTruthy();
+      unmount();
+      localStorage.clear();
+    }
   });
 });

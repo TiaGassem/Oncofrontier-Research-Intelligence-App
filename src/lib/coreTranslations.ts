@@ -61,6 +61,7 @@ export const coreTranslations: Partial<Record<Language, CorePartial>> = {
       changeExperience: "Cambiar experiencia",
       openMenu: 'Abrir menú de navegación', closeMenu: 'Cerrar menú de navegación',
       signIn: 'Iniciar sesión / Crear cuenta', signOut: 'Cerrar sesión', disclaimer: 'Aviso legal',
+      privacy: 'Privacidad', terms: 'Términos', contact: 'Contacto',
     },
     accessible: {
       languageTitle: 'Idioma', interfaceLanguages: 'Idiomas de la interfaz',
@@ -113,6 +114,7 @@ export const coreTranslations: Partial<Record<Language, CorePartial>> = {
       changeExperience: "Erfahrung wechseln",
       openMenu: 'Navigationsmenü öffnen', closeMenu: 'Navigationsmenü schließen',
       signIn: 'Anmelden / Konto erstellen', signOut: 'Abmelden', disclaimer: 'Haftungsausschluss',
+      privacy: 'Datenschutz', terms: 'Nutzungsbedingungen', contact: 'Kontakt',
     },
     accessible: {
       languageTitle: 'Sprache', interfaceLanguages: 'Sprachen der Benutzeroberfläche',
@@ -165,6 +167,7 @@ export const coreTranslations: Partial<Record<Language, CorePartial>> = {
       changeExperience: "Mudar de experiência",
       openMenu: 'Abrir menu de navegação', closeMenu: 'Fechar menu de navegação',
       signIn: 'Entrar / Criar conta', signOut: 'Sair', disclaimer: 'Aviso legal',
+      privacy: 'Privacidade', terms: 'Termos', contact: 'Contacto',
     },
     accessible: {
       languageTitle: 'Idioma', interfaceLanguages: 'Idiomas da interface',
@@ -217,6 +220,7 @@ export const coreTranslations: Partial<Record<Language, CorePartial>> = {
       changeExperience: "Cambia esperienza",
       openMenu: 'Apri menu di navigazione', closeMenu: 'Chiudi menu di navigazione',
       signIn: 'Accedi / Crea account', signOut: 'Esci', disclaimer: 'Dichiarazione',
+      privacy: 'Privacy', terms: 'Termini', contact: 'Contatti',
     },
     accessible: {
       languageTitle: 'Lingua', interfaceLanguages: 'Lingue dell’interfaccia',
@@ -269,6 +273,7 @@ export const coreTranslations: Partial<Record<Language, CorePartial>> = {
       changeExperience: "Deneyimi değiştir",
       openMenu: 'Gezinme menüsünü aç', closeMenu: 'Gezinme menüsünü kapat',
       signIn: 'Oturum aç / Hesap oluştur', signOut: 'Oturumu kapat', disclaimer: 'Yasal uyarı',
+      privacy: 'Gizlilik', terms: 'Koşullar', contact: 'İletişim',
     },
     accessible: {
       languageTitle: 'Dil', interfaceLanguages: 'Arayüz dilleri',
@@ -321,6 +326,7 @@ export const coreTranslations: Partial<Record<Language, CorePartial>> = {
       changeExperience: "切换体验",
       openMenu: '打开导航菜单', closeMenu: '关闭导航菜单',
       signIn: '登录 / 创建账户', signOut: '退出登录', disclaimer: '免责声明',
+      privacy: '隐私', terms: '条款', contact: '联系',
     },
     accessible: {
       languageTitle: '语言', interfaceLanguages: '界面语言',
@@ -373,6 +379,7 @@ export const coreTranslations: Partial<Record<Language, CorePartial>> = {
       changeExperience: "体験を変更",
       openMenu: 'ナビゲーションメニューを開く', closeMenu: 'ナビゲーションメニューを閉じる',
       signIn: 'サインイン / アカウント作成', signOut: 'サインアウト', disclaimer: '免責事項',
+      privacy: 'プライバシー', terms: '利用規約', contact: 'お問い合わせ',
     },
     accessible: {
       languageTitle: '言語', interfaceLanguages: 'インターフェース言語',
@@ -425,6 +432,7 @@ export const coreTranslations: Partial<Record<Language, CorePartial>> = {
       changeExperience: "환경 변경",
       openMenu: '탐색 메뉴 열기', closeMenu: '탐색 메뉴 닫기',
       signIn: '로그인 / 계정 만들기', signOut: '로그아웃', disclaimer: '면책 조항',
+      privacy: '개인정보', terms: '약관', contact: '문의',
     },
     accessible: {
       languageTitle: '언어', interfaceLanguages: '인터페이스 언어',
@@ -477,6 +485,7 @@ export const coreTranslations: Partial<Record<Language, CorePartial>> = {
       changeExperience: "अनुभव बदलें",
       openMenu: 'नेविगेशन मेनू खोलें', closeMenu: 'नेविगेशन मेनू बंद करें',
       signIn: 'साइन इन / खाता बनाएँ', signOut: 'साइन आउट', disclaimer: 'अस्वीकरण',
+      privacy: 'गोपनीयता', terms: 'शर्तें', contact: 'संपर्क',
     },
     accessible: {
       languageTitle: 'भाषा', interfaceLanguages: 'इंटरफ़ेस भाषाएँ',
@@ -529,6 +538,7 @@ export const coreTranslations: Partial<Record<Language, CorePartial>> = {
       changeExperience: "تجربہ بدلیں",
       openMenu: 'نیویگیشن مینو کھولیں', closeMenu: 'نیویگیشن مینو بند کریں',
       signIn: 'سائن ان / اکاؤنٹ بنائیں', signOut: 'سائن آؤٹ', disclaimer: 'ڈس کلیمر',
+      privacy: 'رازداری', terms: 'شرائط', contact: 'رابطہ',
     },
     accessible: {
       languageTitle: 'زبان', interfaceLanguages: 'انٹرفیس زبانیں',
@@ -581,6 +591,7 @@ export const coreTranslations: Partial<Record<Language, CorePartial>> = {
       changeExperience: "تغییر تجربه",
       openMenu: 'باز کردن منوی ناوبری', closeMenu: 'بستن منوی ناوبری',
       signIn: 'ورود / ایجاد حساب', signOut: 'خروج', disclaimer: 'سلب مسئولیت',
+      privacy: 'حریم خصوصی', terms: 'شرایط', contact: 'تماس',
     },
     accessible: {
       languageTitle: 'زبان', interfaceLanguages: 'زبان‌های رابط',
@@ -633,6 +644,7 @@ export const coreTranslations: Partial<Record<Language, CorePartial>> = {
       changeExperience: "অভিজ্ঞতা পরিবর্তন",
       openMenu: 'নেভিগেশন মেনু খুলুন', closeMenu: 'নেভিগেশন মেনু বন্ধ করুন',
       signIn: 'সাইন ইন / অ্যাকাউন্ট তৈরি করুন', signOut: 'সাইন আউট', disclaimer: 'দাবিত্যাগ',
+      privacy: 'গোপনীয়তা', terms: 'শর্তাবলী', contact: 'যোগাযোগ',
     },
     accessible: {
       languageTitle: 'ভাষা', interfaceLanguages: 'ইন্টারফেস ভাষা',
@@ -685,6 +697,7 @@ export const coreTranslations: Partial<Record<Language, CorePartial>> = {
       changeExperience: "Ubah pengalaman",
       openMenu: 'Buka menu navigasi', closeMenu: 'Tutup menu navigasi',
       signIn: 'Masuk / Buat akun', signOut: 'Keluar', disclaimer: 'Penafian',
+      privacy: 'Privasi', terms: 'Ketentuan', contact: 'Kontak',
     },
     accessible: {
       languageTitle: 'Bahasa', interfaceLanguages: 'Bahasa antarmuka',
@@ -737,6 +750,7 @@ export const coreTranslations: Partial<Record<Language, CorePartial>> = {
       changeExperience: "Đổi trải nghiệm",
       openMenu: 'Mở menu điều hướng', closeMenu: 'Đóng menu điều hướng',
       signIn: 'Đăng nhập / Tạo tài khoản', signOut: 'Đăng xuất', disclaimer: 'Tuyên bố miễn trừ',
+      privacy: 'Quyền riêng tư', terms: 'Điều khoản', contact: 'Liên hệ',
     },
     accessible: {
       languageTitle: 'Ngôn ngữ', interfaceLanguages: 'Ngôn ngữ giao diện',
@@ -789,6 +803,7 @@ export const coreTranslations: Partial<Record<Language, CorePartial>> = {
       changeExperience: "เปลี่ยนประสบการณ์",
       openMenu: 'เปิดเมนูนำทาง', closeMenu: 'ปิดเมนูนำทาง',
       signIn: 'เข้าสู่ระบบ / สร้างบัญชี', signOut: 'ออกจากระบบ', disclaimer: 'ข้อปฏิเสธความรับผิด',
+      privacy: 'ความเป็นส่วนตัว', terms: 'ข้อกำหนด', contact: 'ติดต่อ',
     },
     accessible: {
       languageTitle: 'ภาษา', interfaceLanguages: 'ภาษาของอินเทอร์เฟซ',
@@ -841,6 +856,7 @@ export const coreTranslations: Partial<Record<Language, CorePartial>> = {
       changeExperience: "Badilisha uzoefu",
       openMenu: 'Fungua menyu ya urambazaji', closeMenu: 'Funga menyu ya urambazaji',
       signIn: 'Ingia / Fungua akaunti', signOut: 'Toka', disclaimer: 'Kanusho',
+      privacy: 'Faragha', terms: 'Masharti', contact: 'Mawasiliano',
     },
     accessible: {
       languageTitle: 'Lugha', interfaceLanguages: 'Lugha za kiolesura',

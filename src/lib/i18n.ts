@@ -402,6 +402,21 @@ export interface Translation {
     signIn: string;
     signOut: string;
     disclaimer: string;
+    privacy: string;
+    terms: string;
+    contact: string;
+  };
+  // Short labels on the module cards of the dashboard. Dataset names inside
+  // each card (PubMed, GLOBOCAN, …) stay untranslated on purpose.
+  moduleCards: {
+    discovery: string;
+    curemap: string;
+    resistance: string;
+    equity: string;
+    burden: string;
+    biomarkers: string;
+    anatomy: string;
+    companion: string;
   };
   biomarkers: {
     title: string;
@@ -899,6 +914,16 @@ export const translations: Record<'en' | 'fr' | 'ar', Translation> = {
       aiNote: 'Chat and voice work in this language; evidence retrieval is indexed in English.',
       limitedVoice: 'Voice input/output is limited for this language on most devices.',
     },
+    moduleCards: {
+      discovery: 'Cancer Drug Discovery',
+      curemap: 'Evidence Explorer',
+      resistance: 'Treatment Resistance',
+      equity: 'Research Gaps',
+      burden: 'Global Burden Atlas',
+      biomarkers: 'Biomarker Atlas',
+      anatomy: 'Cancer Anatomy',
+      companion: 'For Patients & Families',
+    },
     sidebar: {
       home: 'Home',
       allModules: 'All modules',
@@ -908,6 +933,9 @@ export const translations: Record<'en' | 'fr' | 'ar', Translation> = {
       signIn: 'Sign in / Create account',
       signOut: 'Sign out',
       disclaimer: 'Disclaimer',
+      privacy: 'Privacy',
+      terms: 'Terms',
+      contact: 'Contact',
     },
     biomarkers: {
       title: 'Biomarker Atlas',
@@ -1418,6 +1446,16 @@ export const translations: Record<'en' | 'fr' | 'ar', Translation> = {
       aiNote: 'Le chat et la voix fonctionnent dans cette langue ; la recherche de preuves est indexée en anglais.',
       limitedVoice: 'La saisie/sortie vocale est limitée pour cette langue sur la plupart des appareils.',
     },
+    moduleCards: {
+      discovery: 'Découverte de médicaments',
+      curemap: 'Explorateur de preuves',
+      resistance: 'Résistance aux traitements',
+      equity: 'Lacunes de recherche',
+      burden: 'Atlas mondial du fardeau',
+      biomarkers: 'Atlas des biomarqueurs',
+      anatomy: 'Anatomie du cancer',
+      companion: 'Patients et familles',
+    },
     sidebar: {
       home: 'Accueil',
       allModules: 'Tous les modules',
@@ -1427,6 +1465,9 @@ export const translations: Record<'en' | 'fr' | 'ar', Translation> = {
       signIn: 'Se connecter / Créer un compte',
       signOut: 'Se déconnecter',
       disclaimer: 'Avertissement',
+      privacy: 'Confidentialité',
+      terms: 'Conditions',
+      contact: 'Contact',
     },
     biomarkers: {
       title: 'Atlas des Biomarqueurs',
@@ -1926,6 +1967,16 @@ export const translations: Record<'en' | 'fr' | 'ar', Translation> = {
       aiNote: 'الدردشة والصوت يعملان بهذه اللغة؛ استرجاع الأدلة مفهرس بالإنجليزية.',
       limitedVoice: 'الإدخال/الإخراج الصوتي محدود لهذه اللغة على معظم الأجهزة.',
     },
+    moduleCards: {
+      discovery: 'اكتشاف أدوية السرطان',
+      curemap: 'مستكشف الأدلة',
+      resistance: 'مقاومة العلاج',
+      equity: 'فجوات البحث',
+      burden: 'أطلس العبء العالمي',
+      biomarkers: 'أطلس المؤشرات الحيوية',
+      anatomy: 'تشريح السرطان',
+      companion: 'للمرضى والعائلات',
+    },
     sidebar: {
       home: 'الرئيسية',
       allModules: 'كل الوحدات',
@@ -1935,6 +1986,9 @@ export const translations: Record<'en' | 'fr' | 'ar', Translation> = {
       signIn: 'تسجيل الدخول / إنشاء حساب',
       signOut: 'تسجيل الخروج',
       disclaimer: 'تنبيه',
+      privacy: 'الخصوصية',
+      terms: 'الشروط',
+      contact: 'اتصل بنا',
     },
     biomarkers: {
       title: 'أطلس المؤشرات الحيوية',
