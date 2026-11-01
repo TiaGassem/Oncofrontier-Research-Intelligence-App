@@ -7,17 +7,29 @@ import {
   FileText,
   FlaskConical,
   Check,
+  GitCompare,
 } from 'lucide-react';
 import { PageHeader } from '@/components/PageHeader';
 import { EmptyState } from '@/components/States';
 import { RecordCard } from '@/components/RecordCard';
 import { useApp } from '@/context/AppContext';
+import { useBilling } from '@/context/BillingContext';
+import { getPlanCatalog } from '@/lib/billing';
+import { billingT, featureLabel } from '@/lib/billingTranslations';
 import { getTranslation } from '@/lib/i18n';
 import type { ResearchBrief } from '@/types';
 
 export function ActionPlanner() {
   const { selectedRecords, removeRecord, clearRecords, setCurrentView, language } = useApp();
   const t = getTranslation(language);
+  const bt = billingT(language);
+  const { planId, canUse, recordUse } = useBilling();
+  const catalog = getPlanCatalog();
+  // Plan-metered multi-document comparison: Free gets 3 per month (and up to
+  // 3 records side by side); Pro/Institutional are unlimited. Sources and
+  // citations inside the comparison always stay free.
+  const compareAllowed = canUse('articleComparisons');
+  const [comparison, setComparison] = useState(false);
   const [question, setQuestion] = useState('');
   const [cancerContext, setCancerContext] = useState('');
   const [findings, setFindings] = useState('');
@@ -243,6 +255,85 @@ export function ActionPlanner() {
                 </div>
               ))}
             </div>
+          </div>
+
+          {/* Multi-document comparison (plan-metered) */}
+          <div className="bg-white rounded-xl border border-navy-100 shadow-sm p-4">
+            <div className="flex items-center justify-between mb-3">
+              <h3 className="font-semibold text-navy-900 text-sm flex items-center gap-2">
+                <GitCompare className="w-4 h-4 text-teal-600" aria-hidden /> {featureLabel('articleComparisons', language)}
+              </h3>
+              <button
+                onClick={() => {
+                  if (!compareAllowed) return;
+                  recordUse('articleComparisons');
+                  setComparison(true);
+                }}
+                disabled={selectedRecords.length < 2 || !compareAllowed}
+                className="text-xs font-medium text-teal-700 hover:text-teal-800 disabled:opacity-40"
+              >
+                {compareAllowed ? (language.startsWith('fr') ? 'Comparer' : language.startsWith('ar') ? 'قارن' : 'Compare') : bt.limitReachedCta}
+              </button>
+            </div>
+            {!compareAllowed && (
+              <p role="status" className="text-xs text-amber-900 bg-amber-50 border border-amber-200 rounded-lg p-2">
+                {bt.limitReachedNotice}{' '}
+                <button onClick={() => setCurrentView('pricing')} className="underline font-medium">{bt.limitReachedCta}</button>
+              </p>
+            )}
+            {compareAllowed && !comparison && (
+              <p className="text-xs text-navy-500">
+                {planId === 'free' && `${catalog.free.limits.articleComparisons} / ${language.startsWith('fr') ? 'mois' : language.startsWith('ar') ? 'شهر' : 'month'}`}
+              </p>
+            )}
+            {compareAllowed && comparison && selectedRecords.length >= 2 && (
+              <div className="overflow-x-auto" role="table" aria-label={featureLabel('articleComparisons', language)}>
+                <table className="w-full text-xs">
+                  <thead>
+                    <tr>
+                      <th scope="col" className="text-start p-2 text-navy-500">#</th>
+                      {selectedRecords.slice(0, planId === 'free' ? 3 : 10).map((r, i) => (
+                        <th scope="col" key={r.id} className="text-start p-2 font-medium text-navy-800">{i + 1}</th>
+                      ))}
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-navy-100">
+                    {([
+                      'title', 'kind', 'journal', 'pubDate', 'sourceUrl',
+                    ] as const).map((field) => (
+                      <tr key={field}>
+                        <th scope="row" className="text-start font-medium text-navy-600 p-2 align-top">{field}</th>
+                        {selectedRecords.slice(0, planId === 'free' ? 3 : 10).map((r) => (
+                          <td key={r.id + field} className="p-2 align-top text-navy-700 break-words max-w-[12rem]">
+                            {field === 'sourceUrl'
+                              ? <a href={r.sourceUrl} className="text-teal-700 underline" target="_blank" rel="noreferrer">↗</a>
+                              : String(r[field] ?? '—').slice(0, 80)}
+                          </td>
+                        ))}
+                      </tr>
+                    ))}
+                    <tr>
+                      <th scope="row" className="text-start font-medium text-navy-600 p-2 align-top">cancerTerms</th>
+                      {selectedRecords.slice(0, planId === 'free' ? 3 : 10).map((r) => (
+                        <td key={r.id + '-ct'} className="p-2 align-top text-navy-700">{r.cancerTerms.join(', ') || '—'}</td>
+                      ))}
+                    </tr>
+                    <tr>
+                      <th scope="row" className="text-start font-medium text-navy-600 p-2 align-top">targetTerms</th>
+                      {selectedRecords.slice(0, planId === 'free' ? 3 : 10).map((r) => (
+                        <td key={r.id + '-tt'} className="p-2 align-top text-navy-700">{r.targetTerms.join(', ') || '—'}</td>
+                      ))}
+                    </tr>
+                    <tr>
+                      <th scope="row" className="text-start font-medium text-navy-600 p-2 align-top">treatmentTerms</th>
+                      {selectedRecords.slice(0, planId === 'free' ? 3 : 10).map((r) => (
+                        <td key={r.id + '-st'} className="p-2 align-top text-navy-700">{r.treatmentTerms.join(', ') || '—'}</td>
+                      ))}
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            )}
           </div>
 
           {/* Brief form */}

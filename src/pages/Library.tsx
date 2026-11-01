@@ -23,6 +23,8 @@ import {
   type ProjectEntry, type ProjectItemEntry,
 } from '@/lib/projects';
 import { useApp } from '@/context/AppContext';
+import { useBilling } from '@/context/BillingContext';
+import { billingT } from '@/lib/billingTranslations';
 import { getTranslation } from '@/lib/i18n';
 import type { ResearchRecord } from '@/types';
 
@@ -522,6 +524,8 @@ function TabButton({ active, onClick, icon: Icon, label }: { active: boolean; on
 function Automations({ signedIn }: { signedIn: boolean }) {
   const { language } = useApp();
   const t = getTranslation(language).library;
+  const bt = billingT(language);
+  const { canUse, recordUse } = useBilling();
   const [items, setItems] = useState<SavedSearchAutomation[]>([]);
   const [loading, setLoading] = useState(true);
   const [showForm, setShowForm] = useState(false);
@@ -555,9 +559,24 @@ function Automations({ signedIn }: { signedIn: boolean }) {
       setFormError(t.errNameQuery);
       return;
     }
+    // Free plan allows a small number of concurrent automations; Pro and
+    // institutional are unlimited. Enforced on device — the note on this page
+    // (and the billing page) states that server enforcement is pending.
+    if (!canUse('automations')) {
+      setFormError(
+        `${bt.limitReachedNotice} `
+        + (language.startsWith('fr')
+          ? 'Voir les offres pour des automatisations illimitées.'
+          : language.startsWith('ar')
+            ? 'استعرض الخطط للأتمتة غير المحدودة.'
+            : 'See plans for unlimited automations.')
+      );
+      return;
+    }
     const created = signedIn
       ? await createAutomation(name.trim(), query.trim())
       : createLocalAutomation(name.trim(), query.trim());
+    if (created) recordUse('automations');
     if (!created) {
       setFormError(t.errSaveFailed);
       return;

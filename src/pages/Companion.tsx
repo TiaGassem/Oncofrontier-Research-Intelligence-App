@@ -9,6 +9,7 @@ import { PageHeader } from '@/components/PageHeader';
 import { BrandMark } from '@/components/BrandMark';
 import { useApp } from '@/context/AppContext';
 import { getTranslation, type CompanionT } from '@/lib/i18n';
+import { billingT } from '@/lib/billingTranslations';
 import {
   useCompanionChat, ChatBubble, MicStatusBanner, QuickPrompts,
 } from '@/components/CompanionChatCore';
@@ -703,6 +704,9 @@ function WhatCanIDo({ tc }: { tc: CompanionT }) {
 
 function CompanionChat({ tc }: { tc: CompanionT }) {
   const a11y = useA11ySpeech();
+  const { setCurrentView } = useApp();
+  const { language } = useApp();
+  const bt = billingT(language);
   const [showHistory, setShowHistory] = useState(false);
   const {
     messages, input, setInput, loading, aiNotice,
@@ -751,6 +755,14 @@ function CompanionChat({ tc }: { tc: CompanionT }) {
               {aiNotice === 'signIn' && tc.aiSignInRequired}
               {aiNotice === 'network' && tc.aiProviderNetwork}
               {aiNotice === 'quota' && tc.aiProviderQuota}
+              {aiNotice === 'limit' && (
+                <>
+                  {bt.limitReachedNotice}{' '}
+                  <button onClick={() => setCurrentView('pricing')} className="underline font-medium">
+                    {bt.limitReachedCta}
+                  </button>
+                </>
+              )}
               {aiNotice === 'error' && tc.aiProviderError}
             </p>
           </div>

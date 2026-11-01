@@ -15,6 +15,7 @@ import {
 } from '@/lib/languageSupport';
 import { isUrgentQuery } from '@/lib/companionData';
 import { useA11ySpeech } from '@/lib/a11yPrefs';
+import { checkEntitlement, recordUsage } from '@/lib/billing';
 import {
   listConversations, loadMessages, createConversation, renameConversation,
   setArchived, deleteConversation, appendMessages, titleFromText,
@@ -37,7 +38,7 @@ export interface PatientMsg {
   stopLabel?: string;
 }
 
-export type AiNotice = 'auth' | 'signIn' | 'network' | 'quota' | 'error' | 'none';
+export type AiNotice = 'auth' | 'signIn' | 'network' | 'quota' | 'error' | 'limit' | 'none';
 
 type Recognition = InstanceType<NonNullable<ReturnType<typeof getSpeechRecognitionCtor>>>;
 
@@ -196,6 +197,13 @@ function useCompanionChatState(tc: CompanionT, chatLanguage: string): CompanionC
       const understood = medicalTerms.length > 0;
 
       // 1) Try the conversational model, streaming into the bubble.
+      // Free-plan monthly AI allowance is checked BEFORE any provider call —
+      // basic retrieval below stays free and unlimited on every plan.
+      const aiEntitlement = checkEntitlement('aiSummaries');
+      if (!aiEntitlement.allowed) {
+        setAiNotice('limit');
+        // Fall through to the free retrieval path with a limit note.
+      }
       const history: ProviderChatTurn[] = [
         ...messages.slice(-8).map((m) => ({ role: m.role, content: m.content })),
         { role: 'user' as const, content: text },
@@ -212,8 +220,11 @@ function useCompanionChatState(tc: CompanionT, chatLanguage: string): CompanionC
         );
       };
 
-      const ai = await chatCompleteStream(history, appendDelta, chatLanguage);
+      const ai = aiEntitlement.allowed
+        ? await chatCompleteStream(history, appendDelta, chatLanguage)
+        : { ok: false, providerUnavailable: true, unavailableReason: 'network' as const };
       if (ai.ok && ai.reply) {
+        recordUsage('aiSummaries');
         if (autoSpeakRef.current) speakRef.current({ id: streamId, role: 'assistant', content: ai.reply });
         await persist?.(ai.reply);
         return;

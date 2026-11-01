@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from 'react';
 import { Heart, X, Send, Mic, RotateCcw, Paperclip, FileText, History } from 'lucide-react';
 import { useApp } from '@/context/AppContext';
 import { getTranslation } from '@/lib/i18n';
+import { billingT } from '@/lib/billingTranslations';
 import {
   useCompanionChat, ChatBubble, MicStatusBanner, QuickPrompts,
 } from '@/components/CompanionChatCore';
@@ -11,8 +12,9 @@ import { ConversationManager } from '@/components/ConversationManager';
 import { useA11ySpeech } from '@/lib/a11yPrefs';
 
 export function FloatingCompanion({ hidden }: { hidden?: boolean }) {
-  const { language, direction } = useApp();
+  const { language, direction, setCurrentView } = useApp();
   const t = getTranslation(language);
+  const bt = billingT(language);
   const tc = t.companion;
   const a11y = useA11ySpeech();
   const [open, setOpen] = useState(false);
@@ -122,6 +124,18 @@ export function FloatingCompanion({ hidden }: { hidden?: boolean }) {
                 {aiNotice === 'signIn' && tc.aiSignInRequired}
                 {aiNotice === 'network' && tc.aiProviderNetwork}
                 {aiNotice === 'quota' && tc.aiProviderQuota}
+                {aiNotice === 'limit' && (
+                  <>
+                    {bt.limitReachedNotice}{' '}
+                    <button
+                      onClick={() => setCurrentView('pricing')}
+                      className="underline font-medium"
+                      aria-label={bt.limitReachedCta}
+                    >
+                      {bt.limitReachedCta}
+                    </button>
+                  </>
+                )}
                 {aiNotice === 'error' && tc.aiProviderError}
               </p>
             </div>

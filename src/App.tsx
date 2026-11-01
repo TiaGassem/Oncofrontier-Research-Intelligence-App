@@ -3,6 +3,7 @@ import { AppProvider, useApp } from '@/context/AppContext';
 import { AuthProvider, useAuth } from '@/context/AuthContext';
 import { A11yProvider } from '@/context/A11yContext';
 import { PreferencesProvider } from '@/context/PreferencesContext';
+import { BillingProvider } from '@/context/BillingContext';
 import { BreakReminder } from '@/components/BreakReminder';
 import { Sidebar } from '@/components/Sidebar';
 import { FloatingCompanion } from '@/components/FloatingCompanion';
@@ -27,11 +28,15 @@ const ActionPlanner = lazy(() => import('@/pages/ActionPlanner').then((m) => ({ 
 const ResearchAssistant = lazy(() => import('@/pages/ResearchAssistant').then((m) => ({ default: m.ResearchAssistant })));
 const Methodology = lazy(() => import('@/pages/Methodology').then((m) => ({ default: m.Methodology })));
 const DiscoveryBridge = lazy(() => import('@/pages/DiscoveryBridge').then((m) => ({ default: m.DiscoveryBridge })));
+const Pricing = lazy(() => import('@/pages/Pricing').then((m) => ({ default: m.Pricing })));
+const Billing = lazy(() => import('@/pages/Billing').then((m) => ({ default: m.Billing })));
+const AdminPlans = lazy(() => import('@/pages/AdminPlans').then((m) => ({ default: m.AdminPlans })));
 const PdfReader = lazy(() => import('@/pages/PdfReader').then((m) => ({ default: m.PdfReader })));
 import { AppErrorBoundary } from '@/components/AppErrorBoundary';
 import { Loader2 } from 'lucide-react';
 import { useA11ySpeech } from '@/lib/a11yPrefs';
 import { getTranslation } from '@/lib/i18n';
+import type { ViewName } from '@/types';
 
 function AppContent() {
   const { user, loading } = useAuth();
@@ -44,7 +49,16 @@ function AppContent() {
   // the sidebar link they just pressed. Move focus to <main> after a view
   // change and keep the document title in step with it.
   useEffect(() => {
-    const page = (getTranslation(language).nav as Record<string, string>)[currentView] ?? currentView;
+    const extraTitles: Partial<Record<ViewName, Record<string, string>>> = {
+      pricing: { en: 'Pricing', fr: 'Tarifs', ar: 'الأسعار' },
+      billing: { en: 'Plan & billing', fr: 'Abonnement & facturation', ar: 'الخطة والفوترة' },
+      admin: { en: 'Plan administration', fr: 'Administration des offres', ar: 'إدارة الخطط' },
+    };
+    const lang = language.startsWith('ar') ? 'ar' : language.startsWith('fr') ? 'fr' : 'en';
+    const page =
+      (getTranslation(language).nav as Record<string, string>)[currentView] ??
+      extraTitles[currentView]?.[lang] ??
+      currentView;
     document.title = `${page} · OncoFrontiers`;
     if (previousView.current === currentView) return;
     mainRef.current?.focus({ preventScroll: true });
@@ -125,6 +139,12 @@ function AppContent() {
         return <Library />;
       case 'account':
         return user ? <Library /> : <LoginPage />;
+      case 'pricing':
+        return <Pricing />;
+      case 'billing':
+        return <Billing />;
+      case 'admin':
+        return <AdminPlans />;
       default:
         return <Dashboard onNavigate={setCurrentView} />;
     }
@@ -164,7 +184,9 @@ export default function App() {
           <PreferencesProvider>
             <A11yProvider>
               <CompanionChatProvider>
-                <AppContent />
+                <BillingProvider>
+                  <AppContent />
+                </BillingProvider>
               </CompanionChatProvider>
             </A11yProvider>
           </PreferencesProvider>

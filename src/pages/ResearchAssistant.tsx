@@ -17,6 +17,8 @@ import { PageHeader } from '@/components/PageHeader';
 import { unifiedSearch } from '@/lib/search';
 import { useApp } from '@/context/AppContext';
 import { getTranslation } from '@/lib/i18n';
+import { useBilling } from '@/context/BillingContext';
+import { billingT, featureLabel } from '@/lib/billingTranslations';
 import type { ChatMessage, ExplanationLevel, ResearchRecord, SearchResult } from '@/types';
 
 const LEVEL_CONFIG: Record<
@@ -225,6 +227,9 @@ export function ResearchAssistant() {
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
   const { toggleRecord, isRecordSelected, setCurrentView, selectedRecords, language } = useApp();
+  const { canUse, recordUse, limitReached } = useBilling();
+  const bt = billingT(language);
+  const [planBlocked, setPlanBlocked] = useState(false);
   const t = getTranslation(language);
 
   useEffect(() => {
@@ -264,6 +269,13 @@ export function ResearchAssistant() {
         return;
       }
 
+      if (!canUse('assistantQueries')) {
+        setPlanBlocked(true);
+        setLoading(false);
+        return;
+      }
+      setPlanBlocked(false);
+
       const searchResult = await unifiedSearch({
         cancerType: parsed.cancerType,
         gene: parsed.gene,
@@ -272,6 +284,7 @@ export function ResearchAssistant() {
         question: parsed.question,
         maxResults: 15,
       });
+      recordUse('assistantQueries');
 
       const { content, caveats } = generateSummary(searchResult, parsed, level);
 
@@ -288,9 +301,8 @@ export function ResearchAssistant() {
       setMessages((prev) => [...prev, assistantMsg]);
       setLoading(false);
     },
-    [input, loading, level]
+    [input, loading, level, canUse, recordUse]
   );
-
   return (
     <div className="animate-fade-in flex flex-col h-[calc(100vh-2rem)]">
       <PageHeader
@@ -298,6 +310,23 @@ export function ResearchAssistant() {
         title={t.assistant.title}
         subtitle={t.assistant.subtitle}
       />
+
+      {planBlocked && (
+        <div className="bg-amber-50 border border-amber-200 rounded-xl p-3 mb-4 flex items-start gap-2" role="alert">
+          <AlertTriangle className="w-4 h-4 text-amber-600 flex-shrink-0 mt-0.5" />
+          <p className="text-xs text-amber-900 leading-relaxed">
+            {bt.limitReachedNotice}{' '}
+            <button onClick={() => setCurrentView('pricing')} className="underline font-medium">
+              {bt.limitReachedCta}
+            </button>
+          </p>
+        </div>
+      )}
+      {limitReached.assistantQueries && !planBlocked && (
+        <p className="text-xs text-amber-800 mb-2" role="note">
+          {bt.usage}: {featureLabel('assistantQueries', language)}
+        </p>
+      )}
 
       {/* Transparency banner */}
       <div className="bg-teal-50 border border-teal-200 rounded-xl p-3 mb-4 flex items-start gap-2">

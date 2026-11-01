@@ -255,6 +255,33 @@ New files: `src/pages/Landing.tsx`, `src/components/OnboardingWizard.tsx`,
 - Browser checks were run in headless Chromium (Chromium 129) against the dev server: layout, palettes, presets, chat sending and automation creation. A real microphone, OS speech voices and screen readers cannot be exercised in a headless VM, so microphone capture, live transcription and screen-reader output remain unverified here.
 - Speech input depends on the browser's speech service or, when that is blocked, on the transcription endpoint; if neither responds the app now says so after 15 seconds and points to typing instead of leaving the mic spinning.
 
+## Business model (freemium)
+
+- **Free plan** — basic literature search, limited monthly AI summaries,
+  article comparisons, PDF summaries and assistant queries, selected
+  templates, the public Atlas, and every accessibility feature. Accounts keep
+  saved research history where Supabase is configured.
+- **Individual Pro** — proposed list prices €9.99/month or €79.99/year
+  (suggested, NOT validated market prices), stored in the plan catalogue the
+  admin dashboard can edit (~#/admin).
+- **Institutional licences** — multi-user, shared workspaces, admin tools,
+  support; custom pricing via an enquiry form on the pricing page (~#/pricing).
+
+Implementation status, stated in the UI itself:
+
+- **Payment processing is pending** — no provider is connected, so planning
+  upgrades create a *pending request* on the device (never a charge, and the
+  signed-up plan stays Free until a backend verifies a real payment).
+- **Entitlement enforcement is device-local** until a backend exists;
+  `src/lib/billing.ts` marks exactly where server-side checks must land
+  (`getResolvedPlan()`), and the billing page repeats the disclaimer.
+- Monthly usage counters (`oncofrontier-usage`) reset on the UTC
+  month and power the usage meters, limit notices and the upgrade prompts.
+- Restricted features: AI summaries, article comparisons (3/month on Free),
+  PDF summaries, assistant queries, automation count. Not gated, by design and
+  in code: literature search, reading, every source citation, and all
+  accessibility features.
+
 ## License
 
 AGPL-3.0 License — see [LICENSE](LICENSE) for full text. This license requires that anyone who modifies the app and offers it as a network service must also release their modified source code. Data from external APIs retains their respective licenses.

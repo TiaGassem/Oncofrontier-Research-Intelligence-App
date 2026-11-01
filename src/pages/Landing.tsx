@@ -3,7 +3,8 @@ import { useApp } from '@/context/AppContext';
 import { usePreferences } from '@/context/PreferencesContext';
 import { BrandMark } from '@/components/BrandMark';
 import { AppearanceModes } from '@/components/AppearanceModes';
-import { getSurfaceStrings } from '@/lib/onboardingTranslations';
+import { getSurfaceStrings } from '@/lib/onboardingTranslations'
+import { billingT } from '@/lib/billingTranslations';;
 import { LANGUAGE_CHOICES } from '@/lib/experience';
 import type { Language } from '@/types';
 
@@ -78,6 +79,9 @@ export function Landing() {
             </button>
             <button type="button" onClick={scrollToSection('accessibility')} className="hover:text-navy-900">
               {s.navAccessibility}
+            </button>
+            <button type="button" onClick={() => setCurrentView('pricing')} className="hover:text-navy-900">
+              {billingT(language).pricingNav}
             </button>
           </nav>
 

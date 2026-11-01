@@ -157,7 +157,10 @@ export type ViewName =
   | 'companion'
   | 'privacy'
   | 'terms'
-  | 'contact';
+  | 'contact'
+  | 'pricing'
+  | 'billing'
+  | 'admin';
 
 export type Language =
   | 'en' | 'fr' | 'ar' | 'ar-TN'

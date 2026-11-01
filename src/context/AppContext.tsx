@@ -47,6 +47,7 @@ const VALID_VIEWS: ViewName[] = [
   'methodology', 'discovery', 'pdf', 'library', 'account', 'burden',
   'biomarkers', 'anatomy', 'companion',
   'privacy', 'terms', 'contact',
+  'pricing', 'billing', 'admin',
 ];
 
 function viewFromHash(): ViewName {

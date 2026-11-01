@@ -27,6 +27,7 @@ import { useApp } from '@/context/AppContext';
 import { useAuth } from '@/context/AuthContext';
 import { usePreferences } from '@/context/PreferencesContext';
 import { getTranslation } from '@/lib/i18n';
+import { billingT } from '@/lib/billingTranslations';
 import { AccessibilityMenu, LanguagePicker } from '@/components/AccessibilityMenu';
 import { BrandMark } from '@/components/BrandMark';
 
@@ -269,6 +270,8 @@ export function Sidebar({ currentView, onNavigate }: SidebarProps) {
             </div>
           )}
           <div className="flex flex-wrap items-center gap-x-3 gap-y-1 px-1 text-[10px] text-navy-400">
+            <button onClick={() => onNavigate('billing')} className="underline underline-offset-2 hover:text-teal-300">{billingT(language).billingNav}</button>
+            <button onClick={() => onNavigate('pricing')} className="underline underline-offset-2 hover:text-teal-300">{billingT(language).pricingNav}</button>
             <button onClick={() => onNavigate('privacy')} className="underline underline-offset-2 hover:text-teal-300">{t.sidebar.privacy}</button>
             <button onClick={() => onNavigate('terms')} className="underline underline-offset-2 hover:text-teal-300">{t.sidebar.terms}</button>
             <button onClick={() => onNavigate('contact')} className="underline underline-offset-2 hover:text-teal-300">{t.sidebar.contact}</button>

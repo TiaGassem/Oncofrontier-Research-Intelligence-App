@@ -3,6 +3,9 @@ import { FileText, Loader2, Search, AlertTriangle, FileUp } from 'lucide-react';
 import { PageHeader } from '@/components/PageHeader';
 import { EmptyState } from '@/components/States';
 import { extractPdfText, findRelevantPassages } from '@/lib/pdf';
+import { chatComplete } from '@/lib/aiProvider';
+import { useBilling } from '@/context/BillingContext';
+import { billingT, featureLabel } from '@/lib/billingTranslations';
 import { useApp } from '@/context/AppContext';
 import { getTranslation } from '@/lib/i18n';
 
@@ -14,8 +17,10 @@ interface PDFResult {
 }
 
 export function PdfReader() {
-  const { language } = useApp();
+  const { language, setCurrentView } = useApp();
   const t = getTranslation(language).pdf;
+  const bt = billingT(language);
+  const { canUse, recordUse } = useBilling();
   const [pdf, setPdf] = useState<PDFResult | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -23,6 +28,9 @@ export function PdfReader() {
   const [passages, setPassages] = useState<string[]>([]);
   const [dragOver, setDragOver] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
+  const [summary, setSummary] = useState<string | null>(null);
+  const [summarizing, setSummarizing] = useState(false);
+  const [summarizeNotice, setSummarizeNotice] = useState<string | null>(null);
 
   const handleFile = useCallback(async (file: File) => {
     if (!file.name.toLowerCase().endsWith('.pdf')) {
@@ -58,6 +66,35 @@ export function PdfReader() {
     if (!pdf || !query.trim()) return;
     const results = findRelevantPassages(pdf.fullText, query);
     setPassages(results);
+  };
+
+  /**
+   * AI summary, metered by plan. The entitlement is checked BEFORE the
+   * provider call; the provider call may still fail honestly (no key
+   * configured) — only successful summaries consume the monthly quota.
+   */
+  const handleSummarize = async () => {
+    if (!pdf) return;
+    setSummarizeNotice(null);
+    if (!canUse('pdfSummaries')) {
+      setSummarizeNotice(`${bt.limitReachedNotice}`);
+      return;
+    }
+    setSummarizing(true);
+    const turns = [
+      { role: 'system' as const, content: 'You summarize scientific papers. Answer in the user\'s language. State only what the text supports.' },
+      { role: 'user' as const, content: `Summarize this paper: methods, key findings, limitations. Text from "${pdf.fileName}":\n\n${pdf.fullText.slice(0, 6000)}` },
+    ];
+    const result = await chatComplete(turns, language);
+    setSummarizing(false);
+    if (result.ok && result.reply) {
+      recordUse('pdfSummaries');
+      setSummary(result.reply);
+    } else if (result.edgeNotConfigured) {
+      setSummarizeNotice(bt.requestPendingNotice);
+    } else {
+      setSummarizeNotice(bt.limitReachedNotice);
+    }
   };
 
   return (
@@ -148,6 +185,33 @@ export function PdfReader() {
               </div>
             </div>
           )}
+
+          {/* AI summary (plan-metered) */}
+          <div className="bg-white rounded-xl border border-navy-100 p-4">
+            <div className="flex flex-wrap items-center justify-between gap-2">
+              <h3 className="text-sm font-semibold text-navy-900">{featureLabel('pdfSummaries', language)}</h3>
+              <button
+                onClick={() => void handleSummarize()}
+                disabled={summarizing}
+                className="px-4 py-2 bg-teal-600 text-white text-sm font-medium rounded-lg hover:bg-teal-500 disabled:opacity-40"
+              >
+                {summarizing ? t.extracting : bt.summarizeCta}
+              </button>
+            </div>
+            {summarizeNotice && (
+              <div role="status" className="mt-3 bg-amber-50 border border-amber-200 rounded-lg p-3 text-xs text-amber-900">
+                {summarizeNotice}{' '}
+                <button onClick={() => setCurrentView('pricing')} className="underline font-medium">
+                  {bt.limitReachedCta}
+                </button>
+              </div>
+            )}
+            {summary && (
+              <div className="mt-3 bg-navy-50/50 rounded-lg p-3 text-sm text-navy-700 leading-relaxed border-l-2 border-teal-300 whitespace-pre-wrap">
+                {summary}
+              </div>
+            )}
+          </div>
 
           {/* Q&A */}
           <div className="bg-white rounded-xl border border-navy-100 p-4">
