@@ -6,6 +6,7 @@ import { useApp } from '@/context/AppContext';
 import { useA11yPrefsContext } from '@/context/A11yContext';
 import { getTranslation } from '@/lib/i18n';
 import { EXTENDED_LANGUAGES, voiceLimitedFor } from '@/lib/languageSupport';
+import { ColorBlindPicker } from '@/components/ColorBlindPicker';
 import type { A11yPrefs } from '@/lib/a11yPrefs';
 
 type BooleanPrefKey = { [K in keyof A11yPrefs]: A11yPrefs[K] extends boolean ? K : never }[keyof A11yPrefs];
@@ -76,7 +77,6 @@ export function AccessibilityMenu() {
   const visualRows: ToggleRow[] = [
     { key: 'largeText', label: d.largeText, hint: d.largeTextHint },
     { key: 'highContrast', label: d.highContrast, hint: d.highContrastHint },
-    { key: 'daltonism', label: d.daltonism, hint: d.daltonismHint },
     { key: 'readingMode', label: d.readingMode, hint: d.readingModeHint },
     { key: 'dyslexia', label: d.dyslexiaMode, hint: d.dyslexiaModeHint },
   ];
@@ -251,6 +251,9 @@ export function AccessibilityMenu() {
               {visualRows.map((row) => (
                 <ToggleRow key={row.key} row={row} prefs={prefs} toggle={toggle} />
               ))}
+              <div className="mt-2 border-t border-navy-100 pt-2">
+                <ColorBlindPicker />
+              </div>
             </div>
 
             <div className="border-t border-navy-100 pt-2">

@@ -337,6 +337,13 @@ export interface Translation {
     highContrastHint: string;
     daltonism: string;
     daltonismHint: string;
+    colorBlindPalette: string;
+    colorBlindHint: string;
+    cbNone: string;
+    cbDeuteranopia: string;
+    cbProtanopia: string;
+    cbTritanopia: string;
+    cbMonochromacy: string;
     readingMode: string;
     readingModeHint: string;
     dyslexiaMode: string;
@@ -853,6 +860,13 @@ export const translations: Record<'en' | 'fr' | 'ar', Translation> = {
       highContrastHint: 'Stronger outlines and text contrast',
       daltonism: 'Color-vision safe',
       daltonismHint: 'Palette safe for red-green color blindness',
+      colorBlindPalette: 'Colour-blind palette',
+      colorBlindHint: 'Swaps the accent, alert and chart colours for a set that stays distinguishable',
+      cbNone: 'Default colours',
+      cbDeuteranopia: 'Deuteranopia (green)',
+      cbProtanopia: 'Protanopia (red)',
+      cbTritanopia: 'Tritanopia (blue-yellow)',
+      cbMonochromacy: 'Monochromacy (no colour)',
       readingMode: 'Reading mode',
       readingModeHint: 'Wider spacing and shorter line lengths for easier reading',
       dyslexiaMode: 'Dyslexia friendly',
@@ -1385,6 +1399,13 @@ export const translations: Record<'en' | 'fr' | 'ar', Translation> = {
       highContrastHint: 'Contours et contraste de texte renforcés',
       daltonism: 'Sécurisé daltonisme',
       daltonismHint: 'Palette sûre pour le daltonisme rouge-vert',
+      colorBlindPalette: 'Palette daltonisme',
+      colorBlindHint: 'Remplace les couleurs d’accent, d’alerte et des graphiques par un jeu qui reste distinguable',
+      cbNone: 'Couleurs par défaut',
+      cbDeuteranopia: 'Deutéranopie (vert)',
+      cbProtanopia: 'Protanopie (rouge)',
+      cbTritanopia: 'Tritanopie (bleu-jaune)',
+      cbMonochromacy: 'Monochromie (sans couleur)',
       readingMode: 'Mode lecture',
       readingModeHint: 'Espacement plus large et lignes plus courtes pour une lecture facile',
       dyslexiaMode: 'Adapté à la dyslexie',
@@ -1907,6 +1928,13 @@ export const translations: Record<'en' | 'fr' | 'ar', Translation> = {
       highContrastHint: 'خطوط وألوان أقوى للنص',
       daltonism: 'آمن لعمى الألوان',
       daltonismHint: 'لوحة آمنة لعمى الأحمر والأخضر',
+      colorBlindPalette: 'لوحة عمى الألوان',
+      colorBlindHint: 'تستبدل ألوان التمييز والتنبيه والرسوم بمجموعة تبقى متمايزة',
+      cbNone: 'الألوان الافتراضية',
+      cbDeuteranopia: 'ديوتيرانوپيا (الأخضر)',
+      cbProtanopia: 'پروتانوپيا (الأحمر)',
+      cbTritanopia: 'تريتانوپيا (الأزرق والأصفر)',
+      cbMonochromacy: 'أحادية اللون',
       readingMode: 'وضع القراءة',
       readingModeHint: 'تباعد أوسع وأسطر أقصر لقراءة أسهل',
       dyslexiaMode: 'مناسب لعسر القراءة',

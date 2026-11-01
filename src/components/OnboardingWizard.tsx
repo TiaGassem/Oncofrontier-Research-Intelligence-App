@@ -4,7 +4,9 @@ import { useApp } from '@/context/AppContext';
 import { usePreferences } from '@/context/PreferencesContext';
 import { useA11yPrefsContext } from '@/context/A11yContext';
 import { BrandMark } from '@/components/BrandMark';
+import { ColorBlindPicker } from '@/components/ColorBlindPicker';
 import { getSurfaceStrings, fillTemplate, type A11yOptionKey } from '@/lib/onboardingTranslations';
+import { getTranslation } from '@/lib/i18n';
 import {
   DENSITIES, LANGUAGE_CHOICES, ROLES, ROLE_START_VIEW, TEMPLATES,
   type ExperienceRole, type TemplateId, type WorkspaceDensity,
@@ -21,8 +23,9 @@ const TOTAL_STEPS = 5;
 export function OnboardingWizard() {
   const { language, userLanguage, setLanguage, setCurrentView } = useApp();
   const { role, density, template, complete, setTemplate } = usePreferences();
-  const { prefs: a11y, setPref } = useA11yPrefsContext();
+  const { prefs: a11y, setPref, applyPreset } = useA11yPrefsContext();
   const s = getSurfaceStrings(language).onboarding;
+  const presetLabels = getTranslation(language).displayOptions;
 
   const [step, setStep] = useState(0);
   const [selectedRole, setSelectedRole] = useState<ExperienceRole>(role);
@@ -160,6 +163,22 @@ export function OnboardingWizard() {
             {step === 2 && (
               <fieldset>
                 <legend className="sr-only">{s.a11yTitle}</legend>
+                <div className="mb-4 flex flex-wrap gap-2">
+                  {([
+                    ['paralysis', presetLabels.presetParalysis],
+                    ['blindness', presetLabels.presetBlindness],
+                    ['lowVision', presetLabels.presetLowVision],
+                  ] as const).map(([id, label]) => (
+                    <button
+                      key={id}
+                      type="button"
+                      onClick={() => applyPreset(id)}
+                      className="rounded-full border border-teal-200 bg-teal-50 px-3 py-2 text-xs font-medium text-teal-800 hover:bg-teal-100"
+                    >
+                      {label}
+                    </button>
+                  ))}
+                </div>
                 <div className="grid gap-2 sm:grid-cols-2">
                   {s.a11yOptions.map((opt) => (
                     <label
@@ -181,6 +200,7 @@ export function OnboardingWizard() {
                     </label>
                   ))}
                 </div>
+                <ColorBlindPicker layout="cards" />
                 <p className="mt-4 text-xs text-navy-500">{s.a11yNote}</p>
               </fieldset>
             )}

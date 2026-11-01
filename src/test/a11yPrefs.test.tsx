@@ -79,7 +79,7 @@ describe('accessibility preferences', () => {
       reducedMotion: true,
       nightMode: true,
       blueLight: true,
-      daltonism: true,
+      colorBlind: 'deuteranopia',
       readingMode: true,
       dyslexia: true,
       largeTargets: true,
@@ -97,6 +97,8 @@ describe('accessibility preferences', () => {
       expect(document.documentElement.classList.contains(name)).toBe(true);
     }
     expect(document.documentElement.style.getPropertyValue('--warm-alpha')).toBe('0.40');
+    // The palette is exposed as a data attribute so the CSS can pick it up.
+    expect(document.documentElement.dataset.cb).toBe('deuteranopia');
   });
 
   it('handles warm-filter schedules that cross midnight', () => {

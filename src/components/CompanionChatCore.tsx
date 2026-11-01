@@ -109,6 +109,7 @@ function useCompanionChatState(tc: CompanionT, chatLanguage: string): CompanionC
   const tempChatRef = useRef(false);
   const refreshConversationsRef = useRef<() => Promise<void>>(async () => {});
   const recognitionRef = useRef<Recognition | null>(null);
+  const micWatchdogRef = useRef<number | null>(null);
   const stopRecordingRef = useRef<(() => void) | null>(null);
   const cancelRecordingRef = useRef<(() => void) | null>(null);
   const speakRef = useRef<(msg: PatientMsg) => void>(() => {});
@@ -581,7 +582,23 @@ function useCompanionChatState(tc: CompanionT, chatLanguage: string): CompanionC
       setMic({ status: 'error', message: messages[code ?? ''] ?? tc.micUnavailable });
     };
     let finished = false;
+    // Safety net: a blocked speech service can start recognition and then go
+    // silent forever, leaving the banner stuck on "Listening…". If nothing
+    // arrives within 15 s, stop and say so instead of hanging.
+    if (micWatchdogRef.current) window.clearTimeout(micWatchdogRef.current);
+    micWatchdogRef.current = window.setTimeout(() => {
+      micWatchdogRef.current = null;
+      if (finished) return;
+      finished = true;
+      try { recognitionRef.current?.stop(); } catch { /* already stopped */ }
+      recognitionRef.current = null;
+      setMic((m) => (m.status === 'listening' ? { status: 'error', message: tc.micStalled } : m));
+    }, 15_000);
     rec.onend = () => {
+      if (micWatchdogRef.current) {
+        window.clearTimeout(micWatchdogRef.current);
+        micWatchdogRef.current = null;
+      }
       recognitionRef.current = null;
       // A silent end with no result and no error usually means the mic
       // never actually opened (blocked permission, no audio device) —
@@ -742,7 +759,7 @@ export function useCompanionChat(): CompanionChatState {
 }
 
 export function MicStatusBanner({
-  mic, onDismiss, input, send, needsAudioConsent, onGrantConsent,
+  mic, onDismiss, input, send, needsAudioConsent, onGrantConsent, micStop,
 }: {
   mic: MicState;
   onDismiss: () => void;
@@ -750,6 +767,7 @@ export function MicStatusBanner({
   send: () => void;
   needsAudioConsent?: boolean;
   onGrantConsent?: () => void;
+  micStop?: () => void;
 }) {
   const { language } = useApp();
   const tc = getTranslation(language).companion;
@@ -792,6 +810,14 @@ export function MicStatusBanner({
           {listening ? tc.listeningHint
             : mic.message}
         </p>
+        {listening && micStop && (
+          <button
+            onClick={micStop}
+            className="mt-1 px-2 py-1 text-[11px] font-medium rounded bg-teal-600 text-white hover:bg-teal-700 transition-colors"
+          >
+            {tc.micStopAndInsert}
+          </button>
+        )}
         {showEditHint && (
           <button
             onClick={send}

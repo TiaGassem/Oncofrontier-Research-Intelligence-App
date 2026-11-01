@@ -13,6 +13,8 @@ import {
 } from '@/lib/referenceFormats';
 import {
   fetchAutomations, createAutomation, updateAutomation, deleteAutomation, recordCheckResult,
+  loadLocalAutomations, createLocalAutomation, updateLocalAutomation, deleteLocalAutomation,
+  recordLocalCheckResult,
   type SavedSearchAutomation,
 } from '@/lib/automations';
 import { unifiedSearch } from '@/lib/search';
@@ -49,6 +51,7 @@ export function Library() {
 
   useEffect(() => {
     if (user) loadData();
+    else setLoading(false);
   }, [user, loadData]);
 
   const handleRemoveFav = async (id: string) => {
@@ -278,6 +281,10 @@ export function Library() {
             </div>
           )}
         </>
+      )}
+
+      {!loading && !user && tab !== 'automations' && (
+        <EmptyState title={t.signInLibrary} message={t.signInLibraryMessage} icon={Bookmark} />
       )}
 
       {!loading && tab === 'projects' && <Projects signedIn={!!user} favorites={favorites} />}
@@ -527,17 +534,20 @@ function Automations({ signedIn }: { signedIn: boolean }) {
   const [editQuery, setEditQuery] = useState('');
   const [lastResults, setLastResults] = useState<Record<string, ResearchRecord[]>>({});
 
+  // Signed in → the list lives in the account. Otherwise it lives in this
+  // browser, because there is no server row to write to. Both paths run the
+  // same PubMed/Europe PMC query on "Check now"; the note below says where the
+  // list is stored so nobody thinks it is syncing.
   const load = useCallback(async () => {
     setLoading(true);
-    const data = await fetchAutomations();
+    const data = signedIn ? await fetchAutomations() : loadLocalAutomations();
     setItems(data);
     setLoading(false);
-  }, []);
+  }, [signedIn]);
 
   useEffect(() => {
-    if (signedIn) load();
-    else setLoading(false);
-  }, [signedIn, load]);
+    void load();
+  }, [load]);
 
   const handleCreate = async () => {
     setFormError('');
@@ -545,7 +555,9 @@ function Automations({ signedIn }: { signedIn: boolean }) {
       setFormError(t.errNameQuery);
       return;
     }
-    const created = await createAutomation(name.trim(), query.trim());
+    const created = signedIn
+      ? await createAutomation(name.trim(), query.trim())
+      : createLocalAutomation(name.trim(), query.trim());
     if (!created) {
       setFormError(t.errSaveFailed);
       return;
@@ -557,13 +569,13 @@ function Automations({ signedIn }: { signedIn: boolean }) {
   };
 
   const handleDelete = async (id: string) => {
-    const ok = await deleteAutomation(id);
+    const ok = signedIn ? await deleteAutomation(id) : deleteLocalAutomation(id);
     if (ok) setItems((prev) => prev.filter((a) => a.id !== id));
   };
 
   const handleTogglePause = async (item: SavedSearchAutomation) => {
     const paused = !item.paused;
-    const ok = await updateAutomation(item.id, { paused });
+    const ok = signedIn ? await updateAutomation(item.id, { paused }) : updateLocalAutomation(item.id, { paused });
     if (ok) setItems((prev) => prev.map((a) => (a.id === item.id ? { ...a, paused } : a)));
   };
 
@@ -576,7 +588,9 @@ function Automations({ signedIn }: { signedIn: boolean }) {
   const handleSaveEdit = async () => {
     if (!editingId) return;
     if (!editName.trim() || !editQuery.trim()) return;
-    const ok = await updateAutomation(editingId, { name: editName.trim(), query: editQuery.trim() });
+    const ok = signedIn
+      ? await updateAutomation(editingId, { name: editName.trim(), query: editQuery.trim() })
+      : updateLocalAutomation(editingId, { name: editName.trim(), query: editQuery.trim() });
     if (ok) {
       setItems((prev) =>
         prev.map((a) => (a.id === editingId ? { ...a, name: editName.trim(), query: editQuery.trim() } : a))
@@ -607,7 +621,7 @@ function Automations({ signedIn }: { signedIn: boolean }) {
           })
         : [];
       setLastResults((prev) => ({ ...prev, [item.id]: newPubs.length > 0 ? newPubs : pubs.slice(0, 5) }));
-      await recordCheckResult(item.id, 'ok', newPubs.length);
+      await (signedIn ? recordCheckResult(item.id, 'ok', newPubs.length) : recordLocalCheckResult(item.id, 'ok', newPubs.length));
       setItems((prev) =>
         prev.map((a) =>
           a.id === item.id
@@ -623,7 +637,9 @@ function Automations({ signedIn }: { signedIn: boolean }) {
       );
     } catch (err) {
       const message = err instanceof Error ? err.message : t.searchFailed;
-      await recordCheckResult(item.id, 'error', 0, message);
+      await (signedIn
+        ? recordCheckResult(item.id, 'error', 0, message)
+        : recordLocalCheckResult(item.id, 'error', 0, message));
       setItems((prev) =>
         prev.map((a) =>
           a.id === item.id
@@ -636,18 +652,13 @@ function Automations({ signedIn }: { signedIn: boolean }) {
     }
   };
 
-  if (!signedIn) {
-    return (
-      <EmptyState
-        title={t.signInAutomations}
-        message={t.signInAutomationsMessage}
-        icon={BellRing}
-      />
-    );
-  }
-
   return (
     <div>
+      {!signedIn && (
+        <div className="bg-navy-50 border border-navy-100 rounded-xl p-3 mb-3">
+          <p className="text-xs text-navy-700 leading-relaxed">{t.automationsLocalNote}</p>
+        </div>
+      )}
       <div className="bg-amber-50 border border-amber-200 rounded-xl p-3 mb-4">
         <p className="text-xs text-amber-800 leading-relaxed">
           {t.automationsNote}

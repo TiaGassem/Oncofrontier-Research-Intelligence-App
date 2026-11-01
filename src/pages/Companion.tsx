@@ -775,6 +775,7 @@ function CompanionChat({ tc }: { tc: CompanionT }) {
         send={() => void send()}
         needsAudioConsent={needsAudioConsent}
         onGrantConsent={grantAudioConsent}
+        micStop={toggleListening}
       />
 
       <div className="bg-amber-50/70 border border-amber-100 rounded-xl p-3 mb-4">
@@ -890,15 +891,22 @@ function CompanionChat({ tc }: { tc: CompanionT }) {
           >
             <Paperclip className="w-4 h-4" aria-hidden="true" />
           </button>
-          <input
-            type="text"
+          <textarea
+            rows={1}
             value={input}
             onChange={(e) => setInput(e.target.value)}
-            onKeyDown={(e) => { if (e.key === 'Enter') send(); }}
+            onKeyDown={(e) => {
+              if (e.key === 'Enter' && !e.shiftKey) {
+                e.preventDefault();
+                void send();
+              }
+            }}
             placeholder={tc.chatPlaceholder}
             aria-label={tc.chatPlaceholder}
+            aria-describedby="companion-type-hint"
             dir={/[\u0590-\u05FF\u0600-\u06FF\u0700-\u074F]/.test(input) ? 'rtl' : 'ltr'}
-            className="flex-1 bg-transparent text-sm text-navy-900 placeholder-navy-300 outline-none px-2"
+            className="flex-1 resize-none max-h-28 bg-transparent text-sm leading-relaxed text-navy-900 placeholder-navy-300 outline-none px-2 py-1.5"
+            style={{ height: `${Math.min(7, Math.max(1, input.split('\n').length)) * 1.5 + 0.75}rem` }}
           />
           {canListen && (
             <button
@@ -923,7 +931,10 @@ function CompanionChat({ tc }: { tc: CompanionT }) {
         </div>
       </div>
 
-      <p className="text-xs text-navy-400 mt-3 leading-relaxed">{tc.chatDisclaimer}</p>
+      <p id="companion-type-hint" className="text-xs text-navy-400 mt-3 leading-relaxed">
+        {tc.typeInsteadHint}
+      </p>
+      <p className="text-xs text-navy-400 mt-2 leading-relaxed">{tc.chatDisclaimer}</p>
 
       <QuickPrompts
         tc={tc}

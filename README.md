@@ -49,7 +49,7 @@ ONCOFRONTIER retrieves **real data** from public research APIs. No fabricated pa
    - Export: CSV, RIS, and BibTeX downloads of the whole saved library
    - Projects: named collections of saved papers (create, add/remove papers, delete)
    - Search history, persisted across sessions
-   - Automations: saved queries with manual "Check now" for newly published papers (no background scheduler — checks run only while the app is open)
+   - Automations: saved queries with manual "Check now" for newly published papers (no background scheduler — checks run only while the app is open). Works without an account: the list is then stored in this browser and the page says so.
 
 8. **Connected Data Sources** — Live connector status
    - Real reachability checks with latency, last-checked time, and error states
@@ -75,6 +75,24 @@ ONCOFRONTIER retrieves **real data** from public research APIs. No fabricated pa
 - **RTL layout** for Arabic, Urdu, and Persian (automatic `dir="rtl"` on the document element; mirrored layouts via logical CSS properties)
 - **Language picker before sign-in** on the login page; the choice persists locally so switching language never loses selected records or in-progress work
 - Scientific terms, gene symbols, compound names, and identifiers preserved untranslated
+
+### Accessibility and colour vision
+
+- **Colour-blind palettes** — default, deuteranopia, protanopia, tritanopia and
+  monochromacy. Each palette replaces the accent, alert, warning and success
+  hues plus the chart series, and is applied through `<html data-cb="…">` so it
+  covers the whole interface. Available in the onboarding wizard, the
+  accessibility menu and the appearance switcher on the public site; the choice
+  persists in `oncofrontier-a11y`.
+- **Presets** — "Assisted hands" (large targets, one-handed spacing, listening
+  mode, quick phrases, voice guide), "Blindness support" (voice guide, listening
+  mode, large text, large targets), "Low vision" and "Dyslexia friendly".
+  Presets set the same individual preferences, so they can be combined and
+  reset.
+- **Keyboard and screen reader** — skip link to `#main-content`, focus moves to
+  the page region on every navigation, page changes are announced (live speech
+  when voice guide is on), and the chat composer is a textarea: Enter sends,
+  Shift+Enter adds a line.
 
 ## Data sources
 
@@ -178,7 +196,7 @@ npm test
 
 **Server-side secret configuration:** the Companion LLM key is stored as a Supabase Edge Function secret (`LLM_API_KEY`, set via the Supabase dashboard or CLI), never in frontend code. Configured AI chat checks the caller's signed-in Supabase session. Image analysis, audio transcription, and speech fallback can send selected image/audio/text to Puter after the user starts that feature; review its current terms and privacy handling before enabling those workflows publicly.
 
-Public research features work without Supabase; accounts, the library, and automations require it.
+Public research features and device-local automations work without Supabase. Accounts, saved favorites, search history and projects require it.
 
 ## Scientific integrity
 
@@ -234,7 +252,8 @@ New files: `src/pages/Landing.tsx`, `src/components/OnboardingWizard.tsx`,
 - Companion chat replies fall back to English when the model cannot comply with the requested language; speech recognition quality varies by browser and installed device voices.
 - OCR is not available for scanned PDFs; the app warns rather than pretending to read them.
 - The public literature APIs apply their own rate limits and can have outages; errors and retry actions are shown to users.
-- Browser-based visual testing was not available in this environment (see handover notes).
+- Browser checks were run in headless Chromium (Chromium 129) against the dev server: layout, palettes, presets, chat sending and automation creation. A real microphone, OS speech voices and screen readers cannot be exercised in a headless VM, so microphone capture, live transcription and screen-reader output remain unverified here.
+- Speech input depends on the browser's speech service or, when that is blocked, on the transcription endpoint; if neither responds the app now says so after 15 seconds and points to typing instead of leaving the mic spinning.
 
 ## License
 

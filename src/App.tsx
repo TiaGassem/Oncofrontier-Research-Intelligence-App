@@ -38,6 +38,18 @@ function AppContent() {
   const { currentView, setCurrentView, direction, userLanguage, language } = useApp();
   const { voiceGuide } = useA11ySpeech();
   const previousView = useRef(currentView);
+  const mainRef = useRef<HTMLElement>(null);
+
+  // Screen-reader and keyboard users need to land on the new page, not stay on
+  // the sidebar link they just pressed. Move focus to <main> after a view
+  // change and keep the document title in step with it.
+  useEffect(() => {
+    const page = (getTranslation(language).nav as Record<string, string>)[currentView] ?? currentView;
+    document.title = `${page} · OncoFrontiers`;
+    if (previousView.current === currentView) return;
+    mainRef.current?.focus({ preventScroll: true });
+    window.scrollTo({ top: 0, behavior: 'auto' });
+  }, [currentView, language]);
 
   useEffect(() => {
     const changedView = previousView.current !== currentView;
@@ -110,7 +122,7 @@ function AppContent() {
       case 'pdf':
         return <PdfReader />;
       case 'library':
-        return user ? <Library /> : <LoginPage />;
+        return <Library />;
       case 'account':
         return user ? <Library /> : <LoginPage />;
       default:
@@ -127,7 +139,7 @@ function AppContent() {
         {getTranslation(language).common.skipToContent}
       </a>
       <Sidebar currentView={currentView} onNavigate={setCurrentView} />
-      <main id="main-content" tabIndex={-1} className="flex-1 min-w-0 px-4 py-6 md:px-8 md:py-8 pt-20 md:pt-8 overflow-x-hidden">
+      <main ref={mainRef} id="main-content" tabIndex={-1} className="flex-1 min-w-0 px-4 py-6 md:px-8 md:py-8 pt-20 md:pt-8 overflow-x-hidden">
         <div className="max-w-6xl mx-auto">
           <Suspense fallback={
             <div className="flex items-center justify-center py-24" role="status" aria-live="polite">

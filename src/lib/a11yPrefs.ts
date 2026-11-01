@@ -3,13 +3,32 @@
 
 import { useEffect, useState } from 'react';
 
+/** Colour-vision palettes. 'none' keeps the default teal/navy scheme. */
+export type ColorBlindMode = 'none' | 'deuteranopia' | 'protanopia' | 'tritanopia' | 'monochromacy';
+
+export const COLOR_BLIND_MODES: ColorBlindMode[] = [
+  'none', 'deuteranopia', 'protanopia', 'tritanopia', 'monochromacy',
+];
+
+/**
+ * Swatches shown in the picker. These are the colours the interface actually
+ * uses in that palette (accent, accent-dark, alert, warning, success, chart).
+ */
+export const COLOR_BLIND_SWATCHES: Record<ColorBlindMode, string[]> = {
+  none: ['#0d9488', '#0f766e', '#dc2626', '#d97706', '#16a34a', '#3b82f6'],
+  deuteranopia: ['#0072b2', '#005a8e', '#d55e00', '#e69f00', '#56b4e9', '#009e73'],
+  protanopia: ['#0072b2', '#00527f', '#cc79a7', '#e69f00', '#56b4e9', '#f0e442'],
+  tritanopia: ['#c2410c', '#9a3412', '#0072b2', '#b45309', '#0f766e', '#7c3aed'],
+  monochromacy: ['#1f2937', '#111827', '#4b5563', '#6b7280', '#9ca3af', '#374151'],
+};
+
 export interface A11yPrefs {
   largeText: boolean;
   highContrast: boolean;
   reducedMotion: boolean;
   nightMode: boolean;
   blueLight: boolean;
-  daltonism: boolean;
+  colorBlind: ColorBlindMode;
   readingMode: boolean;
   dyslexia: boolean;
   listeningMode: boolean;
@@ -35,7 +54,7 @@ export const DEFAULT_PREFS: A11yPrefs = {
   reducedMotion: false,
   nightMode: false,
   blueLight: false,
-  daltonism: false,
+  colorBlind: 'none',
   readingMode: false,
   dyslexia: false,
   listeningMode: false,
@@ -73,8 +92,17 @@ export function loadA11yPrefs(): A11yPrefs {
   try {
     const raw = localStorage.getItem(STORAGE_KEY);
     if (!raw) return { ...DEFAULT_PREFS };
-    const parsed = JSON.parse(raw) as Partial<A11yPrefs> & { dayMode?: boolean };
+    const parsed = JSON.parse(raw) as Partial<A11yPrefs> & { dayMode?: boolean; daltonism?: boolean };
     delete parsed.dayMode; // obsolete flag that used to gate night mode
+    // The old single checkbox becomes the deuteranopia palette, which is the
+    // most common deficiency and was the intent of that toggle.
+    if (parsed.daltonism === true && parsed.colorBlind === undefined) {
+      parsed.colorBlind = 'deuteranopia';
+    }
+    delete parsed.daltonism;
+    if (!COLOR_BLIND_MODES.includes(parsed.colorBlind as ColorBlindMode)) {
+      parsed.colorBlind = DEFAULT_PREFS.colorBlind;
+    }
     return { ...DEFAULT_PREFS, ...parsed };
   } catch {
     return { ...DEFAULT_PREFS };
@@ -88,7 +116,10 @@ export function applyA11yPrefs(prefs: A11yPrefs) {
   root.classList.toggle('a11y-high-contrast', prefs.highContrast);
   root.classList.toggle('a11y-reduced-motion', prefs.reducedMotion);
   root.classList.toggle('a11y-blue-light', warmActive(prefs));
-  root.classList.toggle('a11y-daltonism', prefs.daltonism);
+  const colorBlind = COLOR_BLIND_MODES.includes(prefs.colorBlind) ? prefs.colorBlind : 'none';
+  root.classList.toggle('a11y-daltonism', colorBlind !== 'none');
+  if (colorBlind === 'none') delete root.dataset.cb;
+  else root.dataset.cb = colorBlind;
   root.classList.toggle('a11y-reading', prefs.readingMode);
   root.classList.toggle('a11y-dyslexia', prefs.dyslexia);
   root.classList.toggle('a11y-large-targets', prefs.largeTargets);

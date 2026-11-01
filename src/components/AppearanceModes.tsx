@@ -1,15 +1,15 @@
 import { useEffect, useRef, useState } from 'react';
-import { Moon, Droplet, Eye, Palette, Zap, SlidersHorizontal } from 'lucide-react';
+import { Moon, Droplet, Eye, Zap, SlidersHorizontal } from 'lucide-react';
 import { useA11yPrefsContext } from '@/context/A11yContext';
 import { useApp } from '@/context/AppContext';
 import { getSurfaceStrings } from '@/lib/onboardingTranslations';
+import { ColorBlindPicker } from '@/components/ColorBlindPicker';
 
-type ModeKey = 'nightMode' | 'blueLight' | 'daltonism' | 'highContrast' | 'reducedMotion';
+type ModeKey = 'nightMode' | 'blueLight' | 'highContrast' | 'reducedMotion';
 
 const MODES: { key: ModeKey; icon: typeof Moon }[] = [
   { key: 'nightMode', icon: Moon },
   { key: 'blueLight', icon: Droplet },
-  { key: 'daltonism', icon: Palette },
   { key: 'highContrast', icon: Eye },
   { key: 'reducedMotion', icon: Zap },
 ];
@@ -34,8 +34,6 @@ export function AppearanceModes({ tone = 'light' }: { tone?: 'light' | 'dark' })
         return prefs.nightMode ? modes.day : modes.night;
       case 'blueLight':
         return modes.antiUv;
-      case 'daltonism':
-        return modes.daltonism;
       case 'highContrast':
         return modes.contrast;
       case 'reducedMotion':
@@ -66,7 +64,9 @@ export function AppearanceModes({ tone = 'light' }: { tone?: 'light' | 'dark' })
     ? 'bg-navy-800 text-navy-200 hover:bg-navy-700'
     : 'bg-white text-navy-700 border border-navy-200 hover:border-navy-300';
 
-  const activeCount = MODES.filter((mode) => (prefs[mode.key] as boolean)).length;
+  const activeCount =
+    MODES.filter((mode) => (prefs[mode.key] as boolean)).length +
+    (prefs.colorBlind && prefs.colorBlind !== 'none' ? 1 : 0);
 
   return (
     <div className="relative" ref={wrapRef}>
@@ -114,6 +114,9 @@ export function AppearanceModes({ tone = 'light' }: { tone?: 'light' | 'dark' })
               </li>
             ))}
           </ul>
+          <div className="mt-1 border-t border-navy-100 pt-2">
+            <ColorBlindPicker />
+          </div>
         </div>
       )}
     </div>

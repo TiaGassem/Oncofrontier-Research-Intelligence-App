@@ -301,16 +301,118 @@ body {
 .a11y-blue-light .animate-fade-in,
 .a11y-blue-light .animate-slide-up { animation: none !important; }
 
-/* Daltonism: grayscale-safe chart palette — lightness steps carry the
-   distinction instead of hue. */
-.a11y-daltonism {
-  --chart-1: #4d4d4d;
-  --chart-2: #b3b3b3;
-  --chart-3: #8c8c8c;
-  --chart-4: #666666;
-  --chart-5: #333333;
-  --chart-6: #a6a6a6;
+/* Colour-vision palettes ("daltonism" modes).
+   Each palette swaps the accent, alert, warning and success hues for values
+   that stay distinguishable under that deficiency, and replaces the chart
+   series with a colour-safe set. The mode is stored on <html data-cb>, so the
+   choice survives reloads through localStorage in the a11y prefs. */
+html[data-cb='deuteranopia'] {
+  --cb-accent: #0072b2;
+  --cb-accent-strong: #005a8e;
+  --cb-accent-soft: #e6f2fa;
+  --cb-accent-line: #8fc4e3;
+  --cb-alert: #d55e00;
+  --cb-alert-strong: #b34a00;
+  --cb-alert-soft: #fdeee4;
+  --cb-warn: #8a5a00;
+  --cb-warn-soft: #fdf3d9;
+  --cb-ok: #009e73;
+  --cb-ok-soft: #e2f5ef;
+  --chart-1: #0072b2; --chart-2: #e69f00; --chart-3: #009e73;
+  --chart-4: #d55e00; --chart-5: #56b4e9; --chart-6: #cc79a7;
 }
+html[data-cb='protanopia'] {
+  --cb-accent: #0072b2;
+  --cb-accent-strong: #00527f;
+  --cb-accent-soft: #e5f1f9;
+  --cb-accent-line: #8fc0dd;
+  --cb-alert: #cc79a7;
+  --cb-alert-strong: #a95b88;
+  --cb-alert-soft: #fbecf3;
+  --cb-warn: #8a5a00;
+  --cb-warn-soft: #fdf3d9;
+  --cb-ok: #0072b2;
+  --cb-ok-soft: #e5f1f9;
+  --chart-1: #0072b2; --chart-2: #e69f00; --chart-3: #56b4e9;
+  --chart-4: #cc79a7; --chart-5: #f0e442; --chart-6: #333333;
+}
+html[data-cb='tritanopia'] {
+  --cb-accent: #c2410c;
+  --cb-accent-strong: #9a3412;
+  --cb-accent-soft: #fdeee7;
+  --cb-accent-line: #efa98d;
+  --cb-alert: #0072b2;
+  --cb-alert-strong: #005a8e;
+  --cb-alert-soft: #e6f2fa;
+  --cb-warn: #7c3aed;
+  --cb-warn-soft: #f1ecfd;
+  --cb-ok: #0f766e;
+  --cb-ok-soft: #e2f4f2;
+  --chart-1: #c2410c; --chart-2: #0072b2; --chart-3: #7c3aed;
+  --chart-4: #b45309; --chart-5: #0f766e; --chart-6: #6b7280;
+}
+html[data-cb='monochromacy'] {
+  --cb-accent: #1f2937;
+  --cb-accent-strong: #111827;
+  --cb-accent-soft: #eef0f3;
+  --cb-accent-line: #9ca3af;
+  --cb-alert: #4b5563;
+  --cb-alert-strong: #374151;
+  --cb-alert-soft: #eceef1;
+  --cb-warn: #6b7280;
+  --cb-warn-soft: #f0f1f3;
+  --cb-ok: #374151;
+  --cb-ok-soft: #eceef1;
+  --chart-1: #111827; --chart-2: #9ca3af; --chart-3: #4b5563;
+  --chart-4: #6b7280; --chart-5: #374151; --chart-6: #d1d5db;
+}
+
+html[data-cb] .bg-teal-500,
+html[data-cb] .bg-teal-600,
+html[data-cb] .bg-teal-400,
+html[data-cb] .hover\:bg-teal-500:hover,
+html[data-cb] .hover\:bg-teal-600:hover,
+html[data-cb] .hover\:bg-teal-500\/25:hover { background-color: var(--cb-accent) !important; }
+html[data-cb] .bg-teal-50,
+html[data-cb] .bg-teal-100,
+html[data-cb] .bg-teal-500\/15 { background-color: var(--cb-accent-soft) !important; }
+html[data-cb] .text-teal-600,
+html[data-cb] .text-teal-700,
+html[data-cb] .text-teal-800,
+html[data-cb] .hover\:text-teal-600:hover,
+html[data-cb] .hover\:text-teal-700:hover { color: var(--cb-accent-strong) !important; }
+html[data-cb] .border-teal-400,
+html[data-cb] .border-teal-500,
+html[data-cb] .border-teal-200,
+html[data-cb] .border-teal-100 { border-color: var(--cb-accent-line) !important; }
+
+html[data-cb] .bg-red-500,
+html[data-cb] .bg-red-600,
+html[data-cb] .bg-red-400 { background-color: var(--cb-alert) !important; }
+html[data-cb] .bg-red-50,
+html[data-cb] .bg-red-100 { background-color: var(--cb-alert-soft) !important; }
+html[data-cb] .text-red-600,
+html[data-cb] .text-red-700,
+html[data-cb] .text-red-800 { color: var(--cb-alert-strong) !important; }
+html[data-cb] .border-red-200,
+html[data-cb] .border-red-100 { border-color: var(--cb-alert) !important; }
+
+html[data-cb] .bg-amber-50,
+html[data-cb] .bg-amber-100 { background-color: var(--cb-warn-soft) !important; }
+html[data-cb] .text-amber-600,
+html[data-cb] .text-amber-700,
+html[data-cb] .text-amber-800 { color: var(--cb-warn) !important; }
+html[data-cb] .border-amber-100,
+html[data-cb] .border-amber-200 { border-color: var(--cb-warn) !important; }
+
+html[data-cb] .bg-green-50,
+html[data-cb] .bg-green-100 { background-color: var(--cb-ok-soft) !important; }
+html[data-cb] .text-green-600,
+html[data-cb] .text-green-700,
+html[data-cb] .text-green-800 { color: var(--cb-ok) !important; }
+html[data-cb] .bg-blue-50 { background-color: var(--cb-accent-soft) !important; }
+html[data-cb] .text-blue-800 { color: var(--cb-accent-strong) !important; }
+
 
 /* Reading mode: wider line-height and comfortable measure. */
 .a11y-reading p,

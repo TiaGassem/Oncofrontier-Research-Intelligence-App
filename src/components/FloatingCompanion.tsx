@@ -17,7 +17,8 @@ export function FloatingCompanion({ hidden }: { hidden?: boolean }) {
   const a11y = useA11ySpeech();
   const [open, setOpen] = useState(false);
   const [showHistory, setShowHistory] = useState(false);
-  const inputRef = useRef<HTMLInputElement>(null);
+  const [showPrompts, setShowPrompts] = useState(false);
+  const inputRef = useRef<HTMLTextAreaElement>(null);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const {
     messages, input, setInput, loading, aiNotice,
@@ -78,7 +79,7 @@ export function FloatingCompanion({ hidden }: { hidden?: boolean }) {
           aria-label={tc.chat}
           dir={direction}
           data-one-handed-control
-          className={`fixed z-50 ${safeBottom} ${safeRight} w-[min(24rem,calc(100vw-2rem))] h-[min(30rem,70vh)] bg-white rounded-2xl shadow-2xl border border-navy-100 flex flex-col overflow-hidden`}
+          className={`fixed z-50 ${safeBottom} ${safeRight} w-[min(26rem,calc(100vw-1rem))] h-[min(44rem,calc(100vh-1rem))] bg-white rounded-2xl shadow-2xl border border-navy-100 flex flex-col overflow-hidden`}
         >
           <div className="flex items-center justify-between px-4 py-3 bg-navy-900 text-white flex-shrink-0">
             <div className="flex items-center gap-2 min-w-0">
@@ -160,15 +161,16 @@ export function FloatingCompanion({ hidden }: { hidden?: boolean }) {
           )}
 
           <div
-            className="flex-1 overflow-y-auto p-3 space-y-3"
+            className="flex-1 min-h-[9rem] basis-0 overflow-y-auto overscroll-contain p-3 space-y-3"
             role="log"
             aria-live="polite"
             aria-label={tc.chat}
           >
             {messages.length === 0 && !loading && (
-              <div className="text-center py-8 px-4">
+              <div className="text-center py-6 px-4">
                 <Heart className="w-10 h-10 text-navy-100 mx-auto mb-2" aria-hidden="true" />
                 <p className="text-xs text-navy-500 leading-relaxed">{tc.chatIntro}</p>
+                <p className="mt-2 text-[11px] text-navy-400 leading-relaxed">{tc.typeInsteadHint}</p>
               </div>
             )}
 
@@ -234,16 +236,22 @@ export function FloatingCompanion({ hidden }: { hidden?: boolean }) {
               >
                 <Paperclip className="w-4 h-4" aria-hidden="true" />
               </button>
-              <input
+              <textarea
               ref={inputRef}
-              type="text"
+              rows={1}
               value={input}
               onChange={(e) => setInput(e.target.value)}
-              onKeyDown={(e) => { if (e.key === 'Enter') send(); }}
+              onKeyDown={(e) => {
+                if (e.key === 'Enter' && !e.shiftKey) {
+                  e.preventDefault();
+                  void send();
+                }
+              }}
               placeholder={tc.chatPlaceholder}
               aria-label={tc.chatPlaceholder}
               dir={/[\u0590-\u05FF\u0600-\u06FF\u0700-\u074F]/.test(input) ? 'rtl' : 'ltr'}
-              className="flex-1 min-w-0 bg-transparent text-sm text-navy-900 placeholder-navy-300 outline-none px-2"
+              className="flex-1 min-w-0 resize-none max-h-28 bg-transparent text-sm leading-relaxed text-navy-900 placeholder-navy-300 outline-none px-2 py-1.5"
+              style={{ height: `${Math.min(7, Math.max(1, input.split('\n').length)) * 1.5 + 0.75}rem` }}
             />
             {canListen && (
               <button
@@ -268,15 +276,27 @@ export function FloatingCompanion({ hidden }: { hidden?: boolean }) {
             </div>
           </div>
 
-          <div className="max-h-32 overflow-y-auto flex-shrink-0">
-            <QuickPrompts
-              tc={tc}
-              onPrompt={onPrompt}
-              canSpeak={canSpeak}
-              speaking={speakingMsgId !== null}
-              onStopSpeaking={stopSpeaking}
-              quickPhrases={a11y.quickPhrases}
-            />
+          <div className="flex-shrink-0 border-t border-navy-100">
+            <button
+              type="button"
+              onClick={() => setShowPrompts((v) => !v)}
+              aria-expanded={showPrompts}
+              className="w-full px-3 py-2 text-start text-[11px] font-semibold text-navy-500 hover:text-navy-800"
+            >
+              {showPrompts ? tc.hideQuickPrompts : tc.showQuickPrompts}
+            </button>
+            {showPrompts && (
+              <div className="max-h-32 overflow-y-auto">
+                <QuickPrompts
+                  tc={tc}
+                  onPrompt={onPrompt}
+                  canSpeak={canSpeak}
+                  speaking={speakingMsgId !== null}
+                  onStopSpeaking={stopSpeaking}
+                  quickPhrases={a11y.quickPhrases}
+                />
+              </div>
+            )}
           </div>
         </div>
       )}
